@@ -11,7 +11,7 @@ public class JavaMailSenderImpl {
     public JavaMailSender emailSender;
 
     public void sendSimpleMessage(
-            String to, String subject, String text) {
+            String[] to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("itplace2019-g@ya.ru");
         message.setTo(to);

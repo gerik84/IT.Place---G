@@ -10,16 +10,158 @@
     <link href="https://blackrockdigital.github.io/startbootstrap-small-business/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="https://blackrockdigital.github.io/startbootstrap-small-business/css/small-business.css" rel="stylesheet">
+    <link href="https://6xxm3zn5vk.codesandbox.io/static/checkable-list.css" rel="stylesheet">
 </head>
 <body>
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<div class="container-fluid">
+<div class="container">
+    <div class="row my-5">
+        <div class="col-4">
+            <form class="form-group" name="searchForm" id="searchForm">
+                <div class="input-group mb-3">
+                    <label for="searchAddressee"></label><input type="text" class="form-control" id="searchAddressee">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" id="btnSearch">Поиск</button>
+                    </div>
+                </div>
+            </form>
+            <div class="list-group">
+                <input type="checkbox" value="v555574@ya.ru" id="v555574yaru"/><label class="list-group-item" for="v555574yaru">v555574@ya.ru</label>
+                <input type="checkbox" value="galina.kac@simbirsoft.com" id="galinakacsimbirsoftcom"/><label class="list-group-item" for="galinakacsimbirsoftcom">galina.kac@simbirsoft.com</label>
+                <input type="checkbox" value="pavel.asdevel@gmail.com" id="pavelasdevelgmailcom"/><label class="list-group-item" for="pavelasdevelgmailcom">pavel.asdevel@gmail.com</label>
+                <input type="checkbox" value="some@e.mail" id="someemail01"/><label class="list-group-item" for="someemail01">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail02"/><label class="list-group-item" for="someemail02">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail03"/><label class="list-group-item" for="someemail03">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail04"/><label class="list-group-item" for="someemail04">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail05"/><label class="list-group-item" for="someemail05">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail06"/><label class="list-group-item" for="someemail06">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail07"/><label class="list-group-item" for="someemail07">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail08"/><label class="list-group-item" for="someemail08">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail09"/><label class="list-group-item" for="someemail09">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail10"/><label class="list-group-item" for="someemail10">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail11"/><label class="list-group-item" for="someemail11">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail12"/><label class="list-group-item" for="someemail12">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail13"/><label class="list-group-item" for="someemail13">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail14"/><label class="list-group-item" for="someemail14">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail15"/><label class="list-group-item" for="someemail15">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail16"/><label class="list-group-item" for="someemail16">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail17"/><label class="list-group-item" for="someemail17">some@e.mail</label>
+                <input type="checkbox" value="some@e.mail" id="someemail18"/><label class="list-group-item" for="someemail18">some@e.mail</label>
+            </div>
+        </div>
+        <div class="col-8">
+            <input type="text" class="form-control" id="messageSubject" placeholder="Тема сообщения" value="Тестовое сообщение от группы G" minlength="3" disabled><br>
+            <label for="messageText">Введите текст сообщения:</label><textarea class="form-control" rows="5" id="messageText"></textarea><br>
+            <div class="text-center">
+                <div class="btn-group">
+                    <button class="btn btn-outline-secondary" id="btnSave" disabled>Сохранить</button>
+                    <button class="btn btn-outline-secondary" id="btnSendLater" disabled>Сохранить и запланировать</button>
+                    <button class="btn btn-outline-secondary" id="btnSendNow">Сохранить и отправить</button>
+                </div>
+            </div>
 
+            <div class="panel panel-primary filterable p-5">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">Список сообщений</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                    <tr class="filters">
+                        <th><input type="text" class="form-control" placeholder="Дата"></th>
+                        <th><input type="text" class="form-control" placeholder="Тема"></th>
+                        <th><input type="text" class="form-control" placeholder="Сообщение"></th>
+                        <th><input type="text" class="form-control" placeholder="Получатели"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>01.01.2019</td>
+                        <td>Сообщение 1</td>
+                        <td>Сообщение</td>
+                        <td>1@2.3</td>
+                    </tr>
+                    <tr>
+                        <td>02.02.2019</td>
+                        <td>Сообщение 2</td>
+                        <td>Что-то</td>
+                        <td>1@2.3, 4@5.6</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Bootstrap core JavaScript -->
 <script src="https://blackrockdigital.github.io/startbootstrap-small-business/vendor/jquery/jquery.min.js"></script>
 <script src="https://blackrockdigital.github.io/startbootstrap-small-business/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+    $("#btnSendNow").click(function() {
+        sendMessage();
+        return false;
+    });
+    function sendMessage() {
+        $.ajax({
+            type: "PUT",
+            contentType: "application/json",
+            url: "/message/send",
+            dataType: "json",
+            data: formToJSON(),
+            async: false,
+            cache: false,
+            processData: false,
+            success: window.location.replace("/")
+        });
+    }
+
+    function formToJSON() {
+
+
+        return JSON.stringify({
+            messageAddressees: getAddressees(),
+            messageSubject: $("#messageSubject").val(),
+            messageText: $("#messageText").val(),
+        });
+    }
+
+    function getAddressees() {
+        if ($('#v555574yaru').is(":checked"))
+        {
+            var addressee1 = {addressee: $("#v555574yaru").val()};
+        }
+        if ($('#galinakacsimbirsoftcom').is(":checked"))
+        {
+            var addressee2 = {addressee: $("#galinakacsimbirsoftcom").val()};
+        }
+        if ($('#pavelasdevelgmailcom').is(":checked"))
+        {
+            var addressee3 = {addressee: $("#pavelasdevelgmailcom").val()};
+        }
+        return [addressee1, addressee2, addressee3];
+    }
+
+    $('.filterable .filters input').keyup(function(e){
+        var code = e.keyCode || e.which;
+        if (code == '9') return;
+        var $input = $(this),
+            inputContent = $input.val().toLowerCase(),
+            $panel = $input.parents('.filterable'),
+            column = $panel.find('.filters th').index($input.parents('th')),
+            $table = $panel.find('.table'),
+            $rows = $table.find('tbody tr');
+        var $filteredRows = $rows.filter(function(){
+            var value = $(this).find('td').eq(column).text().toLowerCase();
+            return value.indexOf(inputContent) === -1;
+        });
+        $table.find('tbody .no-result').remove();
+        $rows.show();
+        $filteredRows.hide();
+        if ($filteredRows.length === $rows.length) {
+            $table.find('tbody').prepend($('<tr class="no-result text-center"><td colspan="'+ $table.find('.filters th').length +'">Ничего нет</td></tr>'));
+        }
+    });
+</script>
 </body>
 </html>
