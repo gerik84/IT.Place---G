@@ -6,14 +6,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MailSenderImpl {
+public class JavaMailSenderImpl {
     @Autowired
     public JavaMailSender emailSender;
 
     public void sendSimpleMessage(
-            String to, String subject, String text) {
+            String[] to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("");
+        message.setFrom("itplace2019-g@ya.ru");
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
