@@ -35,4 +35,8 @@ public class AddresseeService extends BaseRepository<AddresseeRepository, Addres
     List<Addressee> findByEmailLike(String email) {
         return repository.findByEmailIgnoreCaseLike(email);
     }
+
+    public List<Addressee> findByDepartmentId(Long departmentId) {
+        return repository.findByDepartment_Id(departmentId);
+    }
 }
