@@ -3,21 +3,20 @@ package com.itplace.emailmanager.domain;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import java.util.UUID;
 
 @MappedSuperclass
-public abstract class BaseUuidEntity extends BaseEntity {
+public abstract class BaseIdentifierEntity extends BaseEntity {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    private Long id;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

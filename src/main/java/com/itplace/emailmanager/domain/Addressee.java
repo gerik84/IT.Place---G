@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Addressee extends BaseUuidEntity {
+public class Addressee extends BaseIdentifierEntity {
 
     private String name;
 

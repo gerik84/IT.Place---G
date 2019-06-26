@@ -4,5 +4,5 @@ import com.itplace.emailmanager.domain.Message;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MessageRepository extends UuidJpaRepository<Message> {
+public interface MessageRepository extends LongJpaRepository<Message> {
 }

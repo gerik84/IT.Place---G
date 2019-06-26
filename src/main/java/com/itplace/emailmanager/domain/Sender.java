@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Sender extends BaseUuidEntity {
+public class Sender extends BaseIdentifierEntity {
 
     private String email;
 

@@ -5,7 +5,7 @@ import javax.persistence.ManyToMany;
 import java.util.List;
 
 @Entity
-public class Message extends BaseUuidEntity {
+public class Message extends BaseIdentifierEntity {
 
     @ManyToMany
     private List<LocalizedString> text;
