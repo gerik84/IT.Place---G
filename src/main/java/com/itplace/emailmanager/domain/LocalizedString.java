@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
-public class LocalizedString extends BaseUuidEntity {
+public class LocalizedString extends BaseIdentifierEntity {
 
     @Column(length = 2)
     private String locale = "ru";

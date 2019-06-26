@@ -1,16 +1,14 @@
 package com.itplace.emailmanager.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
-public class Mail extends BaseUuidEntity {
+public class Mail extends BaseIdentifierEntity {
 
     private String subject;
-    @ManyToOne
-    private Addressee addressee;
+    @ManyToMany
+    private List<Addressee> addressee;
     @ManyToOne
     private Sender sender;
     @ManyToOne
@@ -26,12 +24,20 @@ public class Mail extends BaseUuidEntity {
         this.subject = subject;
     }
 
-    public Addressee getAddressee() {
+    public List<Addressee> getAddressee() {
         return addressee;
     }
 
-    public void setAddressee(Addressee addressee) {
+    public void setAddressee(List<Addressee> addressee) {
         this.addressee = addressee;
+    }
+
+    public STATUS getStatus() {
+        return status;
+    }
+
+    public void setStatus(STATUS status) {
+        this.status = status;
     }
 
     public Sender getSender() {

@@ -3,7 +3,7 @@ package com.itplace.emailmanager.domain;
 import javax.persistence.Entity;
 
 @Entity
-public class Department extends BaseUuidEntity {
+public class Department extends BaseIdentifierEntity {
 
     private String name;
 
