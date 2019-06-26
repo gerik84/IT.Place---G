@@ -1,6 +1,9 @@
 package com.itplace.emailmanager.controller;
 
+import com.itplace.emailmanager.domain.Addressee;
+import com.itplace.emailmanager.service.AddresseeService;
 import com.itplace.emailmanager.util.JavaMailSenderImpl;
+import com.itplace.emailmanager.util.MessageWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +13,6 @@ import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/")
@@ -18,14 +20,31 @@ public class RestApiController {
     @Autowired
     JavaMailSenderImpl javaMailSender;
 
-    @RequestMapping(value = "/message/send", method = RequestMethod.PUT)
-    public void addEmployee(@RequestBody JSONObject jsonObject){
-        List<Map<String, String>> rawList = (List<Map<String, String>>) jsonObject.get("messageAddressees");
-        ArrayList<String> addresseesList = new ArrayList<>();
-        for (Map<String, String> map: rawList) {
-            if (map != null) addresseesList.add(map.get("addressee"));
+    @Autowired
+    AddresseeService addresseeService;
 
+    @RequestMapping(value = "/message/sendnow", method = RequestMethod.PUT)
+    public void sendNow(@RequestBody MessageWrapper messageWrapper){
+        for (String s: messageWrapper.getIds()) {
+            System.out.println(s);
         }
-        if (addresseesList.size() > 0) javaMailSender.sendSimpleMessage(addresseesList.toArray(new String[0]), (String) jsonObject.get("messageSubject"), (String) jsonObject.get("messageText"));
+        System.out.println(messageWrapper.getMessageSubject());
+        System.out.println(messageWrapper.getMessageText());
+/*        List<String> idList = (List<String>) jsonObject.get("messageAddressees");
+        List<Addressee> addresseeList = new ArrayList<>();
+        for (String s: idList) {
+            Addressee addressee = addresseeService.findById(Long.valueOf(s));
+            if (addressee != null) addresseeList.add(addressee);
+        }
+        if (addresseeList.size() > 0) {
+            ArrayList<String> emails = new ArrayList<>();
+            addresseeList.forEach(a -> emails.add(a.getEmail()));
+            javaMailSender.sendSimpleMessage(emails.toArray(new String[0]), (String) jsonObject.get("messageSubject"), (String) jsonObject.get("messageText"));
+        }*/
+    }
+
+    @RequestMapping(value = "/message/save", method = RequestMethod.PUT)
+    public void save(@RequestBody JSONObject jsonObject){
+
     }
 }

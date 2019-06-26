@@ -24,30 +24,12 @@
                     <button type="button" class="btn btn-outline-secondary">Добавить из файла</button>
                 </div>
             </div>
-            <label for="searchAddressee"></label><input type="text" class="form-control" id="searchAddressee" placeholder="Фильтр...">
-            <div class="list-group p-4" id="addresseeList">
+            <div class="list-group p-4">
+                <label for="searchAddressee"></label><input type="text" class="form-control mt-1" id="searchAddressee" placeholder="Фильтр...">
                 <div class="addressee-wrapper">
-                    <input type="checkbox" value="v555574@ya.ru" id="v555574yaru"/><label class="list-group-item" for="v555574yaru">v555574@ya.ru</label>
-                    <input type="checkbox" value="galina.kac@simbirsoft.com" id="galinakacsimbirsoftcom"/><label class="list-group-item" for="galinakacsimbirsoftcom">galina.kac@simbirsoft.com</label>
-                    <input type="checkbox" value="pavel.asdevel@gmail.com" id="pavelasdevelgmailcom"/><label class="list-group-item" for="pavelasdevelgmailcom">pavel.asdevel@gmail.com</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail01"/><label class="list-group-item" for="someemail01">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail02"/><label class="list-group-item" for="someemail02">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail03"/><label class="list-group-item" for="someemail03">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail04"/><label class="list-group-item" for="someemail04">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail05"/><label class="list-group-item" for="someemail05">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail06"/><label class="list-group-item" for="someemail06">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail07"/><label class="list-group-item" for="someemail07">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail08"/><label class="list-group-item" for="someemail08">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail09"/><label class="list-group-item" for="someemail09">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail10"/><label class="list-group-item" for="someemail10">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail11"/><label class="list-group-item" for="someemail11">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail12"/><label class="list-group-item" for="someemail12">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail13"/><label class="list-group-item" for="someemail13">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail14"/><label class="list-group-item" for="someemail14">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail15"/><label class="list-group-item" for="someemail15">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail16"/><label class="list-group-item" for="someemail16">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail17"/><label class="list-group-item" for="someemail17">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail18"/><label class="list-group-item" for="someemail18">some@e.mail</label>
+                    <div th:each="addressee : ${addresseeList}">
+                        <input type="checkbox" th:value="${addressee.getId()}" th:id="${addressee.getId()}"/><label class="list-group-item" th:text="${addressee.getEmail()}" th:for="${addressee.getId()}"></label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -173,7 +155,7 @@
         $.ajax({
             type: "PUT",
             contentType: "application/json",
-            url: "/message/send",
+            url: "/message/sendnow",
             dataType: "json",
             data: formToJSON(),
             async: false,
@@ -192,19 +174,13 @@
     }
 
     function getAddressees() {
-        if ($('#v555574yaru').is(":checked"))
-        {
-            var addressee1 = {addressee: $("#v555574yaru").val()};
-        }
-        if ($('#galinakacsimbirsoftcom').is(":checked"))
-        {
-            var addressee2 = {addressee: $("#galinakacsimbirsoftcom").val()};
-        }
-        if ($('#pavelasdevelgmailcom').is(":checked"))
-        {
-            var addressee3 = {addressee: $("#pavelasdevelgmailcom").val()};
-        }
-        return [addressee1, addressee2, addressee3];
+        var addressees = [];
+        $('input[type=checkbox]').each(function () {
+            if (this.checked) {
+                addressees.push($(this).val());
+            }
+        });
+        return addressees;
     }
 </script>
 </body>
