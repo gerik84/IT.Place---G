@@ -8,7 +8,7 @@ public class Mail extends BaseIdentifierEntity {
     private String subject;
     private String message;
     private Integer attempts = 0;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Addressee> addressee;
     @ManyToOne
     private Sender sender;

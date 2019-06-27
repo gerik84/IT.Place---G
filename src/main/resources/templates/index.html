@@ -76,11 +76,10 @@
     });
 
     function sendNow() {
-        alert('Hello!');
         $.ajax({
             type: "POST",
             contentType: "application/json; charset=utf-8",
-            url: "/mail/save",
+            url: "/mail/send/later/11/11/11",
             dataType: "json",
             data: fieldsToJSON(),
             async: false,

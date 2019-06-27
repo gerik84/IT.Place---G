@@ -15,5 +15,5 @@ public interface MailRepository extends LongJpaRepository<Mail> {
 
     List<Mail> findByStatusEquals(Mail.STATUS status);
 
-    List<Mail> findBySender_Id(Long senderId);
+    Mail findBySubjectEquals(String string);
 }

@@ -7,24 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class EmailService {
-    private Sender sender;
     @Autowired
     private JavaMailSenderImpl emailSender;
     @Autowired
     private MailService mailService;
 
-    public EmailService(Sender sender) {
-        this.sender = sender;
-        setMailSenderProps(sender);
-    }
-
     public void sendMail(List<Mail> mail) {
         for (Mail m: mail) {
+            setMailSenderProps(m.getSender());
             try {
                 SimpleMailMessage mailMessage = new SimpleMailMessage();
 
@@ -37,9 +34,11 @@ public class EmailService {
 
                 emailSender.send(mailMessage);
             } catch (MailException e) {
+                System.out.println(e.getMessage());
                 if (m.getAttempts() < 5) m.setAttempts(m.getAttempts() + 1);
                 else m.setStatus(Mail.STATUS.FAILED);
                 mailService.save(m);
+                continue;
             }
             m.setSent();
             mailService.save(m);

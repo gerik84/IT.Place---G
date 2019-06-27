@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 public class RestApiController {
     @Autowired
     AddresseeService addresseeService;
@@ -78,19 +78,19 @@ public class RestApiController {
 
     @RequestMapping(value = "/mail/send/later/{startTime}/{interval}/{repeats}", method = RequestMethod.POST)
     public void sendMailNow(@RequestBody MailWrapper mailWrapper, @PathVariable Long startTime, @PathVariable Long interval, @PathVariable Integer repeats){
-        Mail mail = saveMessage(mailWrapper);
+        saveMessage(mailWrapper);
+        MailTask mailTask = new MailTask();
         if (startTime != null) {
-            MailTask mailTask = new MailTask();
             mailTask.setStartTime(startTime);
             if (interval != null && repeats != null) {
                 mailTask.setIntervalTime(interval);
                 mailTask.setRepeatsLeft(repeats);
             }
-            mailTaskService.scheduleMail(mail, mailTask);
         }
+        mailTaskService.save(mailTask);
     }
 
-    private Mail saveMessage(MailWrapper mailWrapper){
+    private void saveMessage(MailWrapper mailWrapper){
         Mail mail = null;
         List<Long> iDs = new ArrayList<>();
         mailWrapper.getMessageAddressees().forEach(i -> iDs.add(Long.valueOf(i)));
@@ -101,7 +101,8 @@ public class RestApiController {
                 if (addressee != null) addresseeList.add(addressee);
             }
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Sender sender = senderService.findByEmail(authentication.getName());
+//            Sender sender = senderService.findByEmail(authentication.getName());
+            Sender sender = senderService.findById(1L);
 
             mail = new Mail();
             mail.setAddressee(addresseeList);
@@ -110,6 +111,5 @@ public class RestApiController {
             mail.setSender(sender);
             mailService.save(mail);
         }
-        return mail;
     }
 }

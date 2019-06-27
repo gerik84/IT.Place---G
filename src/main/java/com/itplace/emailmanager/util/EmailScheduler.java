@@ -2,7 +2,6 @@ package com.itplace.emailmanager.util;
 
 import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.domain.MailTask;
-import com.itplace.emailmanager.domain.Sender;
 import com.itplace.emailmanager.service.MailService;
 import com.itplace.emailmanager.service.MailTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +9,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 @Component
 public class EmailScheduler {
+    @Autowired
+    EmailService emailService;
     @Autowired
     private MailService mailService;
     @Autowired
@@ -26,41 +22,29 @@ public class EmailScheduler {
 
     @Scheduled(fixedRate = 5000)
     public void emailScheduler(){
-        List<Mail> mailToSend = mailService.findMailToSend();
+        List<Mail> mailToSend = mailService.findMailsToSend();
         if (mailToSend.size() > 0) {
-            ExecutorService executorService = Executors.newCachedThreadPool();
-            Set<Sender> senderSet = new HashSet<>();
-
-            mailToSend.forEach(m -> senderSet.add(m.getSender()));
-            for (Sender s : senderSet) {
-                EmailService emailService = new EmailService(s);
-                executorService.submit(() -> emailService.sendMail(mailToSend.stream().filter(m -> m.getSender().equals(s)).collect(Collectors.toList())));
-            }
+            emailService.sendMail(mailToSend);
         }
 
-        List<MailTask> mailTaskList = mailTaskService.findTasks();
+        List<Mail> taskedMail = new ArrayList<>();
+        List<MailTask> mailTaskList = mailTaskService.findTasksToDo();
         if (mailTaskList.size() > 0) {
-            ExecutorService executorService = Executors.newCachedThreadPool();
-            Set<Sender> senderSet = new HashSet<>();
-            mailTaskList.forEach(t -> senderSet.add(t.getMail().getSender()));
-            for (Sender s : senderSet) {
-                EmailService emailService = new EmailService(s);
-                List<Mail> mailList = new ArrayList<>();
-                for (MailTask t: mailTaskList) {
-                    if (t.getMail().getSender().equals(s)) {
-                        mailList.add(t.getMail());
-                        if (t.getRepeatsLeft() == 1) {
-                            t.setRepeatsLeft(0);
-                            t.setDone();
-                        }
-                        else {
-                            t.setRepeatsLeft(t.getRepeatsLeft() - 1);
-                            t.setStartTime(t.getStartTime() + t.getIntervalTime());
-                        }
-                    }
+            for (MailTask t: mailTaskList) {
+                if (t.getRepeatsLeft() == 1) {
+                    t.setRepeatsLeft(0);
+                    t.setDone();
+                    t.getMail().setStatus(Mail.STATUS.NEW);
+                    taskedMail.add(t.getMail());
                 }
-                executorService.submit(() -> emailService.sendMail(mailList));
+                else {
+                    t.setRepeatsLeft(t.getRepeatsLeft() - 1);
+                    t.setStartTime(t.getStartTime() + t.getIntervalTime());
+                    t.getMail().setStatus(Mail.STATUS.NEW);
+                    taskedMail.add(t.getMail());
+                }
             }
+            emailService.sendMail(taskedMail);
         }
     }
 }

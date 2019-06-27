@@ -14,6 +14,4 @@ values (2, 1561462935000, 1561462935000, 'v555574@ya.ru', 'Влад', 1);
 INSERT INTO ADDRESSEE (id, WHEN_CREATED, WHEN_UPDATED, EMAIL, NAME, DEPARTMENT_ID)
 values (3, 1561462935000, 1561462935000, 'pavel.asdlevel@gmail.com', 'Герасимчик Павел Анатольевич', 1);
 INSERT INTO SENDER (ID, WHEN_CREATED, WHEN_DELETED, WHEN_UPDATED, EMAIL, PASSWORD, PORT, SMTP, ROLE_NAME)
-VALUES (1, 1561462935000, null, 1561462935000, 'pavel.asdlevel@gmail.com', 'repytxbr', '22', 'smtp.gmail.com', 'ROLE_ADMIN');
-INSERT INTO SENDER (ID, WHEN_CREATED, WHEN_DELETED, WHEN_UPDATED, EMAIL, PASSWORD, PORT, SMTP, ROLE_NAME)
-VALUES (2, 1561462935000, null, 1561462935000, 'some@gmail.com', 'pass', '22', 'smtp.gmail.com', 'ROLE_USER');
+VALUES (1, 1561462935000, null, 1561462935000, 'itplace2019-g@ya.ru', 'somepassW0rd', 465, 'smtp.yandex.ru', 'ROLE_ADMIN');
