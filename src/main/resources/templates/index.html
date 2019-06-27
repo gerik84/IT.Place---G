@@ -76,10 +76,11 @@
     });
 
     function sendNow() {
+        alert('Hello!');
         $.ajax({
             type: "POST",
             contentType: "application/json; charset=utf-8",
-            url: "/message/send/now",
+            url: "/mail/save",
             dataType: "json",
             data: fieldsToJSON(),
             async: false,
@@ -99,11 +100,7 @@
 
     function getAddressees() {
         var addressees = [];
-        $('input[type=checkbox]').each(function () {
-            if (this.checked) {
-                addressees.push($(this).val());
-            }
-        });
+        addressees.push("2");
         return addressees;
     }
 </script>

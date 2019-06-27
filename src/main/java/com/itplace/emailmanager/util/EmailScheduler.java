@@ -7,6 +7,7 @@ import com.itplace.emailmanager.service.MailService;
 import com.itplace.emailmanager.service.MailTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-//@Component
+@Component
 public class EmailScheduler {
     @Autowired
     private MailService mailService;

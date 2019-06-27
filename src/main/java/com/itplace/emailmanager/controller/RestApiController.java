@@ -1,7 +1,5 @@
 package com.itplace.emailmanager.controller;
 
-import com.itplace.emailmanager.util.JavaMailSenderImpl;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.itplace.emailmanager.domain.*;
@@ -15,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/")
 public class RestApiController {
-
     @Autowired
     AddresseeService addresseeService;
     @Autowired
@@ -30,17 +28,6 @@ public class RestApiController {
     MailService mailService;
     @Autowired
     SenderService senderService;
-    @Autowired
-    DepartmentService departmentService;
-    @Autowired
-    AddresseeService addresseeService;
-
-    @RequestMapping(value = "/message/send", method = RequestMethod.PUT)
-    public void addEmployee(@RequestBody JSONObject jsonObject){
-        List<Map<String, String>> rawList = (List<Map<String, String>>) jsonObject.get("messageAddressees");
-        ArrayList<String> addresseesList = new ArrayList<>();
-        for (Map<String, String> map: rawList) {
-            if (map != null) addresseesList.add(map.get("addressee"));
 
     @GetMapping("/addressees")
     public List<Addressee> getAddressees(){
