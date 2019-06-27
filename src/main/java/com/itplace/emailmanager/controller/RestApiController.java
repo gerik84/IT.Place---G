@@ -1,15 +1,17 @@
 package com.itplace.emailmanager.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itplace.emailmanager.domain.*;
 import com.itplace.emailmanager.service.*;
 import com.itplace.emailmanager.util.JavaMailSenderImpl;
-import com.itplace.emailmanager.util.MessageWrapper;
+import com.itplace.emailmanager.util.MailWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,8 @@ public class RestApiController {
     MailService mailService;
     @Autowired
     SenderService senderService;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @GetMapping("/addressees")
     public List<Addressee> getAddressees(){
@@ -61,26 +65,26 @@ public class RestApiController {
     }
 
     @RequestMapping(value = "/mail/save", method = RequestMethod.POST)
-    public void saveMail(@RequestBody MessageWrapper messageWrapper){
-        saveMessage(messageWrapper);
+    public void saveMail(@RequestBody MailWrapper mailWrapper){
+        saveMessage(mailWrapper);
     }
 
     @RequestMapping(value = "/mail/send/now", method = RequestMethod.POST)
-    public void sendMailNow(@RequestBody MessageWrapper messageWrapper){
-        Mail mail = saveMessage(messageWrapper);
+    public void sendMailNow(@RequestBody MailWrapper mailWrapper){
+        Mail mail = saveMessage(mailWrapper);
         if (mail != null) javaMailSender.sendMail(mail);
     }
 
     @RequestMapping(value = "/mail/send/later/{timeDate}", method = RequestMethod.POST)
-    public void sendMailNow(@RequestBody MessageWrapper messageWrapper, @PathVariable String timeDate){ // TODO в каком формате приходит время?
-        Mail mail = saveMessage(messageWrapper);
+    public void sendMailNow(@RequestBody MailWrapper mailWrapper, @PathVariable String timeDate){ // TODO в каком формате приходит время?
+        Mail mail = saveMessage(mailWrapper);
         if (mail != null) javaMailSender.sendScheduledMail(mail, timeDate);
     }
 
-    private Mail saveMessage(MessageWrapper messageWrapper){
+    private Mail saveMessage(MailWrapper mailWrapper){
         Mail mail = null;
         List<Long> iDs = new ArrayList<>();
-        messageWrapper.getIds().forEach(i -> iDs.add(Long.valueOf(i)));
+        mailWrapper.getIds().forEach(i -> iDs.add(Long.valueOf(i)));
         if (iDs.size() > 0) {
             List<Addressee> addresseeList = new ArrayList<>();
             for (Long l : iDs) {
@@ -89,7 +93,7 @@ public class RestApiController {
             }
             LocalizedString localizedString = new LocalizedString();  // TODO а LocalizedString не лишнее?
             localizedString.setLocale("ru");                          // TODO может будем отправлять простую строку?
-            localizedString.setValue(messageWrapper.getMessageText());
+            localizedString.setValue(mailWrapper.getMessageText());
             List<LocalizedString> localizedStrings = new ArrayList<>();
             localizedStrings.add(localizedString);
 
@@ -103,11 +107,11 @@ public class RestApiController {
             mail = new Mail();
             mail.setAddressee(addresseeList);
             mail.setMessage(message);
-            mail.setSubject(messageWrapper.getMessageSubject());
+            mail.setSubject(mailWrapper.getMessageSubject());
             mail.setSender(sender);
             mailService.save(mail);
         }
-            return mail;
+        return mail;
     }
 
 }

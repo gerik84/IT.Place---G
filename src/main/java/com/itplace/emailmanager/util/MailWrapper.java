@@ -1,20 +1,18 @@
 package com.itplace.emailmanager.util;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
-public class MessageWrapper {
-    @JsonManagedReference
+public class MailWrapper {
     private List<String> ids;
-    @JsonManagedReference
     private String messageSubject;
-    @JsonManagedReference
     private String messageText;
 
-    public MessageWrapper() {
+    public MailWrapper() {
     }
 
     public List<String> getIds() {

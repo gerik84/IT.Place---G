@@ -26,10 +26,10 @@
             <div class="list-group p-4">
                 <label for="searchAddressee"></label><input type="text" class="form-control mt-1" id="searchAddressee" placeholder="Фильтр...">
                 <div class="addressee-wrapper">
-
-                    Сюда подгружаем группы и адресатов в таком виде (если оставляем текущий дизайн):
-                        <input type="checkbox" value="addressee.getId()" id="addressee.getId()"/><label class="list-group-item" text="addressee.getEmail()" for="addressee.getId()"></label>
-
+                    Сюда подгружаем группы:
+                    <a href="#" class="list-group-item list-group-item-action">department.getName()</a>
+                        Сюда адресатов по одинарному клику на группу. По двойному клику на группу выбираем все checkbox из группы:
+                        <input type="checkbox" value="addressee.getId()" id="addressee.getId()"/><label class="list-group-item" for="addressee.getId()">addressee.getEmail()</label>
                 </div>
             </div>
         </div>
@@ -53,9 +53,7 @@
                         <label for="searchMessage"></label><input type="text" class="form-control mt-1" id="searchMessage" placeholder="Фильтр...">
                     </div>
                     <div class="message-wrapper">
-
                     Сюда подгружаем список сообщений
-
                     </div>
                 </div>
             </div>
@@ -73,11 +71,11 @@
 
     function sendMessage() {
         $.ajax({
-            type: "PUT",
-            contentType: "application/json",
-            url: "/message/sendnow",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "/message/send/now",
             dataType: "json",
-            data: formToJSON(),
+            data: fieldsToJSON(),
             async: false,
             cache: false,
             processData: false,
@@ -85,7 +83,7 @@
         });
     }
 
-    function formToJSON() {
+    function fieldsToJSON() {
         return JSON.stringify({
             messageAddressees: getAddressees(),
             messageSubject: $("#messageSubject").val(),
