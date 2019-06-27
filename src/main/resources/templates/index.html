@@ -65,11 +65,11 @@
 <script src="https://blackrockdigital.github.io/startbootstrap-small-business/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
     $("#btnSendNow").click(function() {
-        sendMessage();
+        sendNow();
         return false;
     });
 
-    function sendMessage() {
+    function sendNow() {
         $.ajax({
             type: "POST",
             contentType: "application/json; charset=utf-8",
