@@ -3,7 +3,7 @@ package com.itplace.emailmanager.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itplace.emailmanager.domain.*;
 import com.itplace.emailmanager.service.*;
-import com.itplace.emailmanager.util.JavaMailSenderImpl;
+import com.itplace.emailmanager.util.EmailService;
 import com.itplace.emailmanager.util.MailWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import java.util.List;
 @RequestMapping("/")
 public class RestApiController {
     @Autowired
-    JavaMailSenderImpl javaMailSender;
+    EmailService javaMailSender;
     @Autowired
     AddresseeService addresseeService;
     @Autowired
@@ -72,19 +71,31 @@ public class RestApiController {
     @RequestMapping(value = "/mail/send/now", method = RequestMethod.POST)
     public void sendMailNow(@RequestBody MailWrapper mailWrapper){
         Mail mail = saveMessage(mailWrapper);
-        if (mail != null) javaMailSender.sendMail(mail);
+        if (mail != null) {
+            javaMailSender.sendMail(mail);
+        }
     }
 
     @RequestMapping(value = "/mail/send/later/{timeDate}", method = RequestMethod.POST)
     public void sendMailNow(@RequestBody MailWrapper mailWrapper, @PathVariable String timeDate){ // TODO в каком формате приходит время?
         Mail mail = saveMessage(mailWrapper);
-        if (mail != null) javaMailSender.sendScheduledMail(mail, timeDate);
+        if (mail != null) {
+            javaMailSender.sendScheduledMail(mail, false, null, timeDate);
+        }
+    }
+
+    @RequestMapping(value = "/mail/send/regular/{interval}", method = RequestMethod.POST)
+    public void sendMailNow(@RequestBody MailWrapper mailWrapper, @PathVariable Long interval){
+        Mail mail = saveMessage(mailWrapper);
+        if (mail != null) {
+            javaMailSender.sendScheduledMail(mail, true, interval, null);
+        }
     }
 
     private Mail saveMessage(MailWrapper mailWrapper){
         Mail mail = null;
         List<Long> iDs = new ArrayList<>();
-        mailWrapper.getIds().forEach(i -> iDs.add(Long.valueOf(i)));
+        mailWrapper.getMessageAddressees().forEach(i -> iDs.add(Long.valueOf(i)));
         if (iDs.size() > 0) {
             List<Addressee> addresseeList = new ArrayList<>();
             for (Long l : iDs) {

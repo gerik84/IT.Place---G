@@ -1,26 +1,24 @@
 package com.itplace.emailmanager.util;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class MailWrapper {
-    private List<String> ids;
+    private List<String> messageAddressees;
     private String messageSubject;
     private String messageText;
 
     public MailWrapper() {
     }
 
-    public List<String> getIds() {
-        return ids;
+    public List<String> getMessageAddressees() {
+        return messageAddressees;
     }
 
-    public void setIds(List<String> ids) {
-        this.ids = ids;
+    public void setMessageAddressees(List<String> messageAddressees) {
+        this.messageAddressees = messageAddressees;
     }
 
     public String getMessageSubject() {

@@ -56,6 +56,10 @@ public class Mail extends BaseIdentifierEntity {
         this.message = message;
     }
 
+    public void setDelivered(){
+        this.setStatus(STATUS.DELIVERED);
+    }
+
     enum STATUS {
         NEW,
         SENDING,
