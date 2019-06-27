@@ -11,44 +11,31 @@
     <link href="https://6xxm3zn5vk.codesandbox.io/static/custom.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<div class="container">
-    <div class="row my-5">
-        <div class="col-4">
-            <div class="text-center">
+<div class="container" style="height: 93vh; padding: 20px 0 0 0;">
+    <div class="row h-100">
+        <div class="col-4" id="addressee-container">
+
+            <div class="text-center flex-grow-0">
                 <div class="btn-group">
                     <button type="button" class="btn btn-outline-secondary">Добавить</button>
                     <button type="button" class="btn btn-outline-secondary">Добавить из файла</button>
                 </div>
             </div>
-            <label for="searchAddressee"></label><input type="text" class="form-control" id="searchAddressee" placeholder="Фильтр...">
-            <div class="list-group p-4" id="addresseeList">
-                <div class="addressee-wrapper">
-                    <input type="checkbox" value="v555574@ya.ru" id="v555574yaru"/><label class="list-group-item" for="v555574yaru">v555574@ya.ru</label>
-                    <input type="checkbox" value="galina.kac@simbirsoft.com" id="galinakacsimbirsoftcom"/><label class="list-group-item" for="galinakacsimbirsoftcom">galina.kac@simbirsoft.com</label>
-                    <input type="checkbox" value="pavel.asdevel@gmail.com" id="pavelasdevelgmailcom"/><label class="list-group-item" for="pavelasdevelgmailcom">pavel.asdevel@gmail.com</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail01"/><label class="list-group-item" for="someemail01">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail02"/><label class="list-group-item" for="someemail02">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail03"/><label class="list-group-item" for="someemail03">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail04"/><label class="list-group-item" for="someemail04">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail05"/><label class="list-group-item" for="someemail05">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail06"/><label class="list-group-item" for="someemail06">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail07"/><label class="list-group-item" for="someemail07">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail08"/><label class="list-group-item" for="someemail08">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail09"/><label class="list-group-item" for="someemail09">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail10"/><label class="list-group-item" for="someemail10">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail11"/><label class="list-group-item" for="someemail11">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail12"/><label class="list-group-item" for="someemail12">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail13"/><label class="list-group-item" for="someemail13">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail14"/><label class="list-group-item" for="someemail14">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail15"/><label class="list-group-item" for="someemail15">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail16"/><label class="list-group-item" for="someemail16">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail17"/><label class="list-group-item" for="someemail17">some@e.mail</label>
-                    <input type="checkbox" value="some@e.mail" id="someemail18"/><label class="list-group-item" for="someemail18">some@e.mail</label>
-                </div>
+
+            <div class="flex-grow-0">
+                <input type="text" class="form-control" id="searchAddressee" placeholder="Фильтр...">
+            </div>
+
+            <div class="h-100 flex-grow-1">
+                <ul id="addressee-list" class="noselect">
+
+                </ul>
             </div>
         </div>
         <div class="col-8">
@@ -155,6 +142,9 @@
 <script src="https://blackrockdigital.github.io/startbootstrap-small-business/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+
+<script src="/js/main.js"></script>
+
 <script>
     $(document).ready(function() {
         $('#messageTable').DataTable( {

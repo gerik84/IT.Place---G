@@ -1,0 +1,110 @@
+body {
+}
+
+
+.loading {
+    position: absolute;
+    display: block;
+    content: '';
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    min-width: 20px;
+    min-height: 20px;
+    background: rgba(0, 0, 0, 0.1) url('../images/spinner-big.svg') center center no-repeat;
+    background-size: 30%;
+    border-radius: 5px;
+}
+
+
+
+.font-small {
+    font-size: 12px;
+}
+
+
+.list-group-item label {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+
+
+#addressee-list {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+}
+
+#addressee-list .selected {
+    background: red;
+}
+
+#addressee-list ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+#addressee-list ul li {
+    padding: 5px 5px 5px 40px;
+}
+
+#addressee-list li:hover > div {
+
+}
+
+ #addressee-list ul li:hover {
+    background: rgba(0,0,0, 0.1);
+    cursor: default;
+}
+
+#addressee-container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+
+#addressee-container > div {
+    margin-bottom: 20px;
+}
+.list-group input {
+    display: inline-block !important;
+}
+
+.department-name {
+    padding: 10px;
+    /*//background: url("");*/
+}
+
+
+.addressee-list-item {
+    display: flex;
+    align-items: center;
+
+}
+
+.addressee-list-item input {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}

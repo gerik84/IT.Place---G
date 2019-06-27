@@ -1,5 +1,7 @@
 package com.itplace.emailmanager.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -14,6 +16,7 @@ public class Addressee extends BaseIdentifierEntity {
     @Column(length = 2)
     private String locale;
 
+    @JsonIgnore
     @ManyToOne
     private Department department;
 

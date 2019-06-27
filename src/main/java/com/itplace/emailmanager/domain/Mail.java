@@ -7,7 +7,7 @@ import java.util.List;
 public class Mail extends BaseIdentifierEntity {
 
     private String subject;
-    @ManyToMany
+    @OneToMany
     private List<Addressee> addressee;
     @ManyToOne
     private Sender sender;
