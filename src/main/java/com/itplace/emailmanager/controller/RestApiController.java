@@ -1,5 +1,9 @@
 package com.itplace.emailmanager.controller;
 
+import com.itplace.emailmanager.util.JavaMailSenderImpl;
+import org.json.simple.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import com.itplace.emailmanager.domain.*;
 import com.itplace.emailmanager.service.*;
 import com.itplace.emailmanager.util.MailWrapper;
@@ -13,8 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 public class RestApiController {
+
     @Autowired
     AddresseeService addresseeService;
     @Autowired
@@ -25,6 +30,17 @@ public class RestApiController {
     MailService mailService;
     @Autowired
     SenderService senderService;
+    @Autowired
+    DepartmentService departmentService;
+    @Autowired
+    AddresseeService addresseeService;
+
+    @RequestMapping(value = "/message/send", method = RequestMethod.PUT)
+    public void addEmployee(@RequestBody JSONObject jsonObject){
+        List<Map<String, String>> rawList = (List<Map<String, String>>) jsonObject.get("messageAddressees");
+        ArrayList<String> addresseesList = new ArrayList<>();
+        for (Map<String, String> map: rawList) {
+            if (map != null) addresseesList.add(map.get("addressee"));
 
     @GetMapping("/addressees")
     public List<Addressee> getAddressees(){
@@ -34,11 +50,6 @@ public class RestApiController {
     @GetMapping("/addressees/department/{departmentId}")
     public List<Addressee> getAddresseesByDepartment(@PathVariable Long departmentId){
         return addresseeService.findByDepartmentId(departmentId);
-    }
-
-    @GetMapping("/departments")
-    public List<Department> getDepartments(){
-        return departmentService.findAll();
     }
 
     @GetMapping("/mails/page/{pageNo}/{pageSize}/{sorted}")
@@ -55,6 +66,22 @@ public class RestApiController {
     @GetMapping("/mail/{mailId}")
     public Mail getMailById(@PathVariable Long mailId){
         return mailService.findById(mailId);
+    }
+
+
+    @RequestMapping(value = "/departments", method = RequestMethod.GET)
+    public ResponseEntity getDeportment() {
+        return createResponse(departmentService.findAll());
+    }
+
+    @RequestMapping(value = "/department/{id}/addressees", method = RequestMethod.GET)
+    public ResponseEntity getAddressee(@PathVariable("id") Long department) {
+        return createResponse(addresseeService.findByDepartmentId(department));
+    }
+
+    private ResponseEntity createResponse(Object body) {
+        return body == null ?  new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK) :
+                new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/mail/save", method = RequestMethod.POST)
@@ -98,5 +125,4 @@ public class RestApiController {
         }
         return mail;
     }
-
 }

@@ -26,15 +26,15 @@ public class AddresseeService extends BaseRepository<AddresseeRepository, Addres
         return mail.getAddressee();
     }
 
-    List<Addressee> findByNameLike(String name) {
+    public List<Addressee> findByNameLike(String name) {
         return repository.findByNameIgnoreCaseLike(name);
     }
 
-    List<Addressee> findByEmailLike(String email) {
+    public List<Addressee> findByEmailLike(String email) {
         return repository.findByEmailIgnoreCaseLike(email);
     }
 
     public List<Addressee> findByDepartmentId(Long departmentId) {
-        return repository.findByDepartment_Id(departmentId);
+        return repository.findByDepartmentId(departmentId);
     }
 }
