@@ -5,14 +5,15 @@ import java.util.List;
 
 @Entity
 public class Mail extends BaseIdentifierEntity {
-
     private String subject;
+    private String message;
+    private Integer attempts = 0;
     @ManyToMany
     private List<Addressee> addressee;
     @ManyToOne
     private Sender sender;
-    @ManyToOne
-    private Message message;
+    @OneToOne
+    private MailTask mailTask;
     @Enumerated(EnumType.STRING)
     private STATUS status = STATUS.NEW;
 
@@ -48,21 +49,51 @@ public class Mail extends BaseIdentifierEntity {
         this.sender = sender;
     }
 
-    public Message getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(Message message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 
-    public void setDelivered(){
-        this.setStatus(STATUS.DELIVERED);
+    public void setNew() {
+        attempts = 0;
+        setStatus(STATUS.NEW);
     }
 
-    enum STATUS {
+    public void setSent(){
+        setStatus(STATUS.SENT);
+    }
+
+    public void setFailed() {
+        setStatus(STATUS.FAILED);
+    }
+
+    public void setCanceled() {
+        setStatus(STATUS.CANCELLED);
+    }
+
+    public MailTask getMailTask() {
+        return mailTask;
+    }
+
+    public void setMailTask(MailTask mailTask) {
+        this.mailTask = mailTask;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
+    }
+
+    public enum STATUS {
         NEW,
-        SENDING,
-        DELIVERED,
+        SENT,
+        FAILED,
+        CANCELLED
     }
 }

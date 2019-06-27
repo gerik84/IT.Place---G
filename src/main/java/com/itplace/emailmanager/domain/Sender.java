@@ -5,7 +5,6 @@ import javax.persistence.ManyToOne;
 
 @Entity
 public class Sender extends BaseIdentifierEntity {
-
     private String email;
 
     private String password;

@@ -7,10 +7,9 @@ import javax.persistence.Id;
 
 @Entity
 public class Role {
-
     @Id
     @Enumerated(EnumType.STRING)
-    ROLE name;
+    private ROLE name;
 
     public ROLE getName() {
         return name;
@@ -21,7 +20,7 @@ public class Role {
     }
 
     public enum ROLE {
-        USER,
-        ADMIN
+        ROLE_USER,
+        ROLE_ADMIN
     }
 }

@@ -1,9 +1,7 @@
 package com.itplace.emailmanager.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itplace.emailmanager.domain.*;
 import com.itplace.emailmanager.service.*;
-import com.itplace.emailmanager.util.EmailService;
 import com.itplace.emailmanager.util.MailWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -18,19 +16,15 @@ import java.util.List;
 @RequestMapping("/")
 public class RestApiController {
     @Autowired
-    EmailService javaMailSender;
-    @Autowired
     AddresseeService addresseeService;
     @Autowired
     DepartmentService departmentService;
     @Autowired
-    MessageService messageService;
+    MailTaskService mailTaskService;
     @Autowired
     MailService mailService;
     @Autowired
     SenderService senderService;
-    @Autowired
-    ObjectMapper objectMapper;
 
     @GetMapping("/addressees")
     public List<Addressee> getAddressees(){
@@ -68,27 +62,17 @@ public class RestApiController {
         saveMessage(mailWrapper);
     }
 
-    @RequestMapping(value = "/mail/send/now", method = RequestMethod.POST)
-    public void sendMailNow(@RequestBody MailWrapper mailWrapper){
+    @RequestMapping(value = "/mail/send/later/{startTime}/{interval}/{repeats}", method = RequestMethod.POST)
+    public void sendMailNow(@RequestBody MailWrapper mailWrapper, @PathVariable Long startTime, @PathVariable Long interval, @PathVariable Integer repeats){
         Mail mail = saveMessage(mailWrapper);
-        if (mail != null) {
-            javaMailSender.sendMail(mail);
-        }
-    }
-
-    @RequestMapping(value = "/mail/send/later/{timeDate}", method = RequestMethod.POST)
-    public void sendMailNow(@RequestBody MailWrapper mailWrapper, @PathVariable String timeDate){ // TODO в каком формате приходит время?
-        Mail mail = saveMessage(mailWrapper);
-        if (mail != null) {
-            javaMailSender.sendScheduledMail(mail, false, null, timeDate);
-        }
-    }
-
-    @RequestMapping(value = "/mail/send/regular/{interval}", method = RequestMethod.POST)
-    public void sendMailNow(@RequestBody MailWrapper mailWrapper, @PathVariable Long interval){
-        Mail mail = saveMessage(mailWrapper);
-        if (mail != null) {
-            javaMailSender.sendScheduledMail(mail, true, interval, null);
+        if (startTime != null) {
+            MailTask mailTask = new MailTask();
+            mailTask.setStartTime(startTime);
+            if (interval != null && repeats != null) {
+                mailTask.setIntervalTime(interval);
+                mailTask.setRepeatsLeft(repeats);
+            }
+            mailTaskService.scheduleMail(mail, mailTask);
         }
     }
 
@@ -102,22 +86,12 @@ public class RestApiController {
                 Addressee addressee = addresseeService.findById(l);
                 if (addressee != null) addresseeList.add(addressee);
             }
-            LocalizedString localizedString = new LocalizedString();
-            localizedString.setLocale("ru");
-            localizedString.setValue(mailWrapper.getMessageText());
-            List<LocalizedString> localizedStrings = new ArrayList<>();
-            localizedStrings.add(localizedString);
-
-            Message message = new Message();
-            message.setText(localizedStrings);
-            messageService.save(message);
-
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Sender sender = senderService.findByEmail(authentication.getName());
 
             mail = new Mail();
             mail.setAddressee(addresseeList);
-            mail.setMessage(message);
+            mail.setMessage(mailWrapper.getMessageText());
             mail.setSubject(mailWrapper.getMessageSubject());
             mail.setSender(sender);
             mailService.save(mail);

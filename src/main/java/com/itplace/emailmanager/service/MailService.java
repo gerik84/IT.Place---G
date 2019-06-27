@@ -12,4 +12,8 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
     public List<Mail> findBySubjectLike(String subject) {
         return repository.findBySubjectIgnoreCaseLike(subject);
     }
+
+    public List<Mail> findMailToSend() {
+        return repository.findByStatusEqualsAndWhenCreatedBeforeAndMailTaskIsNull(Mail.STATUS.NEW, System.currentTimeMillis());
+    }
 }
