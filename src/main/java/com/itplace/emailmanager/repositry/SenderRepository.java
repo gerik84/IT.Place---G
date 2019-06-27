@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface SenderRepository extends LongJpaRepository<Sender> {
 
-    List<Sender> findByEmailIgnoreCaseLike(String email);
+    Sender findByEmailIgnoreCase(String email);
 
     List<Sender> findByRole(Role role);
 

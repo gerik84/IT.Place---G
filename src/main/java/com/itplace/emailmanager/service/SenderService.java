@@ -16,8 +16,8 @@ public class SenderService extends BaseRepository<SenderRepository, Sender> {
     @Autowired
     RoleRepository roleRepository;
 
-    public List<Sender> findByEmail(String email) {
-        return repository.findByEmailIgnoreCaseLike(email);
+    public Sender findByEmail(String email) {
+        return repository.findByEmailIgnoreCase(email);
     }
 
     public List<Sender> findByRole(Role.ROLE role) {

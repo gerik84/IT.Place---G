@@ -11,8 +11,6 @@ import java.util.List;
 
 @Service
 public class AddresseeService extends BaseRepository<AddresseeRepository, Addressee> {
-
-
     @Autowired
     MailRepository mailRepository;
 

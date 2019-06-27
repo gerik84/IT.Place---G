@@ -8,15 +8,10 @@ import javax.persistence.ManyToOne;
 
 @Entity
 public class Addressee extends BaseIdentifierEntity {
-
     private String name;
 
     private String email;
 
-    @Column(length = 2)
-    private String locale;
-
-    @JsonIgnore
     @ManyToOne
     private Department department;
 
@@ -42,13 +37,5 @@ public class Addressee extends BaseIdentifierEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
     }
 }

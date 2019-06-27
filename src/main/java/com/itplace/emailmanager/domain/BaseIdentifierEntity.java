@@ -6,7 +6,6 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class BaseIdentifierEntity extends BaseEntity {
-
     @Id
     @GeneratedValue
     private Long id;
@@ -14,7 +13,6 @@ public abstract class BaseIdentifierEntity extends BaseEntity {
     public Long getId() {
         return id;
     }
-
 
     public void setId(Long id) {
         this.id = id;
