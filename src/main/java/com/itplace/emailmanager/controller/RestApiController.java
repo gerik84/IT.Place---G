@@ -91,8 +91,8 @@ public class RestApiController {
                 Addressee addressee = addresseeService.findById(l);
                 if (addressee != null) addresseeList.add(addressee);
             }
-            LocalizedString localizedString = new LocalizedString();  // TODO а LocalizedString не лишнее?
-            localizedString.setLocale("ru");                          // TODO может будем отправлять простую строку?
+            LocalizedString localizedString = new LocalizedString();
+            localizedString.setLocale("ru");
             localizedString.setValue(mailWrapper.getMessageText());
             List<LocalizedString> localizedStrings = new ArrayList<>();
             localizedStrings.add(localizedString);
