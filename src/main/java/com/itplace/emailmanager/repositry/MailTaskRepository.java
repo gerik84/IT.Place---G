@@ -1,6 +1,5 @@
 package com.itplace.emailmanager.repositry;
 
-import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.domain.MailTask;
 import org.springframework.stereotype.Repository;
 
