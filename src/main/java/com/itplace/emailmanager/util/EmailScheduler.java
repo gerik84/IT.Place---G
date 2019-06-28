@@ -31,16 +31,14 @@ public class EmailScheduler {
         List<MailTask> mailTaskList = mailTaskService.findTasksToDo();
         if (mailTaskList.size() > 0) {
             for (MailTask t: mailTaskList) {
-                if (t.getRepeatsLeft() == 1) {
-                    t.setRepeatsLeft(0);
+                if (t.getRepeatsLeft() == 0) {
                     t.setDone();
-                    t.getMail().setStatus(Mail.STATUS.NEW);
-                    taskedMail.add(t.getMail());
+                    mailTaskService.save(t);
                 }
                 else {
                     t.setRepeatsLeft(t.getRepeatsLeft() - 1);
                     t.setStartTime(t.getStartTime() + t.getIntervalTime());
-                    t.getMail().setStatus(Mail.STATUS.NEW);
+                    mailTaskService.save(t);
                     taskedMail.add(t.getMail());
                 }
             }

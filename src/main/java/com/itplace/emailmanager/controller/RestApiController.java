@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -71,27 +70,49 @@ public class RestApiController {
                 new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/mail/save", method = RequestMethod.POST)
+    @RequestMapping(value = "/mail", method = RequestMethod.POST)
     public void saveMail(@RequestBody MailWrapper mailWrapper){
-        saveMessage(mailWrapper);
+        saveMessage(mailWrapper, null);
+    }
+
+    @RequestMapping(value = "/mail/send/later/{startTime}", method = RequestMethod.POST)
+    public void sendMailOnce(@RequestBody MailWrapper mailWrapper, @PathVariable Long startTime){
+        MailTask mailTask = new MailTask();
+        mailTask.setStartTime(startTime);
+        mailTask.setIntervalTime(0);
+        mailTask.setRepeatsLeft(1);
+
+        mailTaskService.save(mailTask);
+        MailTask savedTask = mailTaskService.getLastAdded();
+        saveMessage(mailWrapper, savedTask);
+    }
+
+    @RequestMapping(value = "/mail/send/later/{startTime}/{interval}", method = RequestMethod.POST)
+    public void sendMailNow(@RequestBody MailWrapper mailWrapper, @PathVariable Long startTime, @PathVariable Long interval){
+        MailTask mailTask = new MailTask();
+        mailTask.setStartTime(startTime);
+        mailTask.setIntervalTime(interval);
+        mailTask.setRepeatsLeft(Integer.MAX_VALUE);
+
+        mailTaskService.save(mailTask);
+        MailTask savedTask = mailTaskService.getLastAdded();
+        saveMessage(mailWrapper, savedTask);
     }
 
     @RequestMapping(value = "/mail/send/later/{startTime}/{interval}/{repeats}", method = RequestMethod.POST)
     public void sendMailNow(@RequestBody MailWrapper mailWrapper, @PathVariable Long startTime, @PathVariable Long interval, @PathVariable Integer repeats){
-        saveMessage(mailWrapper);
         MailTask mailTask = new MailTask();
-        if (startTime != null) {
-            mailTask.setStartTime(startTime);
-            if (interval != null && repeats != null) {
-                mailTask.setIntervalTime(interval);
-                mailTask.setRepeatsLeft(repeats);
-            }
-        }
+        mailTask.setStartTime(startTime);
+        mailTask.setIntervalTime(interval);
+        mailTask.setRepeatsLeft(repeats);
+
         mailTaskService.save(mailTask);
+        MailTask savedTask = mailTaskService.getLastAdded();
+        saveMessage(mailWrapper, savedTask);
     }
 
-    private void saveMessage(MailWrapper mailWrapper){
-        Mail mail = null;
+    private void saveMessage(MailWrapper mailWrapper, MailTask mailTask){
+        Mail mail;
         List<Long> iDs = new ArrayList<>();
         mailWrapper.getMessageAddressees().forEach(i -> iDs.add(Long.valueOf(i)));
         if (iDs.size() > 0) {
@@ -109,6 +130,10 @@ public class RestApiController {
             mail.setMessage(mailWrapper.getMessageText());
             mail.setSubject(mailWrapper.getMessageSubject());
             mail.setSender(sender);
+            if (mailTask != null) {
+                mail.setMailTask(mailTask);
+                mailTask.setMail(mail);
+            }
             mailService.save(mail);
         }
     }

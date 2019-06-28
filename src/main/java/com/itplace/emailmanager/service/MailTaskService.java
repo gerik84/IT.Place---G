@@ -17,4 +17,8 @@ public class MailTaskService extends BaseRepository<MailTaskRepository, MailTask
     public List<MailTask> findTasksToDo(){
         return repository.findByStatusEqualsAndStartTimeBefore(MailTask.STATUS.NEW, System.currentTimeMillis());
     }
+
+    public MailTask getLastAdded() {
+        return repository.findFirstByOrderByIdDesc();
+    }
 }

@@ -11,4 +11,6 @@ public interface MailTaskRepository extends LongJpaRepository<MailTask> {
     MailTask findByMail_Id(Long mailId);
 
     List<MailTask> findByStatusEqualsAndStartTimeBefore(MailTask.STATUS status, Long timeDate);
+
+    MailTask findFirstByOrderByIdDesc();
 }

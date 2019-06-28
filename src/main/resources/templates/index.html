@@ -62,39 +62,5 @@
 <script src="/vendor/jquery/jquery.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>
-<script>
-    $("#btnSendNow").click(function() {
-        sendNow();
-        return false;
-    });
-
-    function sendNow() {
-        $.ajax({
-            type: "POST",
-            contentType: "application/json; charset=utf-8",
-            url: "/mail/send/later/1/1/1",
-            dataType: "json",
-            data: fieldsToJSON(),
-            async: false,
-            cache: false,
-            processData: false,
-            success: window.location.replace("/")
-        });
-    }
-
-    function fieldsToJSON() {
-        return JSON.stringify({
-            messageAddressees: getAddressees(),
-            messageSubject: $("#messageSubject").val(),
-            messageText: $("#messageText").val(),
-        });
-    }
-
-    function getAddressees() {
-        var addressees = [];
-        addressees.push("2");
-        return addressees;
-    }
-</script>
 </body>
 </html>
