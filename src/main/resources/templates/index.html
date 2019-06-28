@@ -6,12 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Email manager</title>
-    <link href="https://blackrockdigital.github.io/startbootstrap-small-business/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://blackrockdigital.github.io/startbootstrap-small-business/css/small-business.css" rel="stylesheet">
-    <link href="https://6xxm3zn5vk.codesandbox.io/static/custom.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/small-business.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 <div th:replace="fragments/navbar :: navbar"></div>
@@ -42,7 +39,6 @@
                     <label for="messageText">Введите текст сообщения:</label><textarea class="form-control" rows="3" id="messageText"></textarea><br>
                     <div class="text-center">
                         <div class="btn-group">
-                            <button class="btn btn-outline-secondary" id="btnSave" disabled>Сохранить</button>
                             <button class="btn btn-outline-secondary" id="btnSendLater" data-toggle="modal" data-target="#sendLaterModal" disabled>Сохранить и запланировать</button>
                             <button class="btn btn-outline-secondary" id="btnSendNow">Сохранить и отправить</button>
                         </div>
@@ -63,12 +59,9 @@
     </div>
 </div>
 
-<script src="https://blackrockdigital.github.io/startbootstrap-small-business/vendor/jquery/jquery.min.js"></script>
-<script src="https://blackrockdigital.github.io/startbootstrap-small-business/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/js/main.js"></script>
-
 <script>
     $("#btnSendNow").click(function() {
         sendNow();
@@ -79,7 +72,7 @@
         $.ajax({
             type: "POST",
             contentType: "application/json; charset=utf-8",
-            url: "/mail/send/later/11/11/11",
+            url: "/mail/send/later/1/1/1",
             dataType: "json",
             data: fieldsToJSON(),
             async: false,
