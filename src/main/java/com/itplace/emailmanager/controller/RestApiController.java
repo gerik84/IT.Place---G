@@ -6,6 +6,8 @@ import com.itplace.emailmanager.domain.*;
 import com.itplace.emailmanager.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -69,6 +71,8 @@ public class RestApiController {
 
     @RequestMapping(value = "/mail", method = RequestMethod.POST)
     public void saveMail(@RequestBody Mail mail){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        mail.setSender(senderService.findByEmail(authentication.getName()));
         if (mail.getMailTask() != null) {
             mailTaskService.save(mail.getMailTask());
             MailTask mailTask = mailTaskService.getLastAdded();
