@@ -15,7 +15,7 @@ textarea {
     height: 44px;
 }
 
-.card {
+.shadow {
     -webkit-box-shadow: 8px 10px 23px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 8px 10px 23px -6px rgba(0,0,0,0.75);
     box-shadow: 8px 10px 23px -6px rgba(0,0,0,0.75);
@@ -65,7 +65,8 @@ textarea {
 }
 
 #addressee-list .selected {
-    background: red;
+    background: #0062cc;
+    color: white;
 }
 
 #addressee-list ul {
@@ -83,7 +84,7 @@ textarea {
 }
 
  #addressee-list ul li:hover {
-    background: rgba(0,0,0, 0.1);
+    /*background: rgba(0,0,0, 0.1);*/
     cursor: default;
 }
 
@@ -137,4 +138,60 @@ textarea {
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+}
+
+#mail-list {
+    margin: 20px 0 0 0;
+    padding: 0;
+    list-style: none;
+
+}
+
+#mail-list li {
+    display: flex;
+    padding: 5px;
+
+}
+
+#mail-list-subject {
+    width: 100%;
+    flex-grow: 1;
+
+}
+
+#mail-list-text {
+    color: #cccccc;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; /* Отменяем перенос текста */
+    width: 100%;
+
+
+}
+#mail-list-created {
+
+}
+
+#mail-list-status, #mail-list-created, #mail-list-text  {
+    font-size: 14px;
+}
+
+#mail-list .sent {
+    color: #e0a800;
+}
+
+#mail-list .delivered {
+    color: green;
+}
+
+#mail-list .failed {
+    color: red;
+}
+
+#mail-list .canceled {
+    color: gray;
+}
+
+.mail-list-container {
+    display: none;
 }

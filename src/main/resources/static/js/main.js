@@ -40,10 +40,7 @@ function toggleDepartment(id, callback = null) {
         activeEl.removeClass('open-tree');
         return false;
     }
-
-
     activeEl.addClass('open-tree');
-
     new Http()
         .body()
         .method("GET")
@@ -54,8 +51,8 @@ function toggleDepartment(id, callback = null) {
             let html = '';
             if (msg !== null && msg.length > 0) {
                 msg.forEach(function (it) {
-                    html += ' <li class="addressee-list-item" onclick="getDetails(' + it.id + ', this)">' +
-                        '                                <input type="checkbox" value="' + it.id + '" />' +
+                    html += ' <li class="addressee-list-item" onclick="getDetails(' + it.id + ', $(this))">' +
+                        '                                <input type="checkbox" value="' + it.id + '"  onclick="event.stopPropagation();"/>' +
                         '                                <div class="d-flex flex-column">' +
                         '                                    <div>' + it.name + '</div>' +
                         '                                    <div class="font-small">' + it.email + '</div>' +
@@ -77,23 +74,44 @@ function toggleDepartment(id, callback = null) {
 }
 
 
-function getDetails(id, event) {
-    alert(id);
+function getDetails(id, view) {
+    $('.addressee-list-item').removeClass('selected');
+    $('.auto-checked').prop('checked', false);
+    $('.auto-checked').removeClass('auto-checked');
+    $(view).addClass('selected');
+    $(view).find('input').addClass('auto-checked');
+    $(view).find('input').prop('checked', true);
+    updateMailList(id);
+}
+
+function updateMailList(id) {
     new Http()
         .method("GET")
         .url('/api/addressee/' + id + '/mails')
         .preloader('#mail-list-container')
         .send(function (msg, code) {
-            // if (code !== 201) {
-            //     alert('Ой, что-то пошло не так, повторите попытку поже');
-            //     return;
-            // }
-            // alert('Сообщение добавлено в очередь отправки');
-            // $('#new-message-subject').val('');
-            // $('#new-message-text').val('');
-        });
 
-    event.preventDefault();
+            html = '';
+            if (msg.length === 0) {
+                html += '<div class="text-center">Список рассылок пуст</div>'
+            } else {
+                msg.forEach(function (item) {
+                    html +=
+                        '<li class="d-flex card flex-row">' +
+                        '<div class="w-75">' +
+                        '   <div class="mail-list-subject">' + item.subject + '</div>' +
+                        '   <div class="mail-list-text small-font">' + item.message + '</div>' +
+                        '</div>' +
+                        '<div class="w-25 text-right d-flex flex-column justify-content-between ">' +
+                        '   <div class="mail-list-created">' + item.whenCreated + '</div>' +
+                        '   <div class="mail-list-status ' + item.status.toLowerCase() + '">' + item.status.toLowerCase() + '</div>' +
+                        '</div>' +
+                        '</li>';
+                });
+            }
+            $('#mail-list').empty().append(html);
+            $('.mail-list-container').show();
+        });
 }
 
 function selectAll(id, state) {
@@ -108,10 +126,6 @@ function selectAll(id, state) {
     } else {
         $('#department_' + id + ' li input').prop('checked', state);
     }
-
-
-
-
 }
 
 function sendNow() {
@@ -138,8 +152,6 @@ function sendNow() {
     mail.message = text;
     mail.sender = {id: 1};
 
-    // mail.mailTask = mailTask;
-
     let json = JSON.stringify(mail);
     console.log(json);
     new Http()
@@ -148,13 +160,17 @@ function sendNow() {
         .url('/api/mail')
         .preloader('body')
         .send(function (msg, code) {
-            if (code != 201) {
+            if (code !== 201) {
                 alert('Ой, что-то пошло не так, повторите попытку поже');
                 return;
             }
             alert('Сообщение добавлено в очередь отправки');
             $('#new-message-subject').val('');
             $('#new-message-text').val('');
+
+            if (mail.addressee.length === 1) {
+                updateMailList(mail.addressee[0].id);
+            }
         });
 }
 
@@ -211,10 +227,7 @@ class Http {
                 callback(response, msg.status);
 
             },
-            // success: function (msg) {
-            //     // preload.removeClass('loading');
-            //     alert('success');
-            // }
+
         })
     }
 }
