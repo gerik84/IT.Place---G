@@ -3,6 +3,7 @@ package com.itplace.emailmanager.service;
 import com.itplace.emailmanager.domain.Addressee;
 import com.itplace.emailmanager.domain.BaseIdentifierEntity;
 import com.itplace.emailmanager.repositry.LongJpaRepository;
+import com.itplace.emailmanager.security.UserDetails.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -105,8 +106,6 @@ public abstract class BaseRepository<R extends LongJpaRepository, T extends Base
     private long getEndDayWithBegin(Long date) {
         return date + 24 * 3600 * 1000 - 1000;
     }
-
-
 }
 
 

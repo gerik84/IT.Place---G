@@ -1,5 +1,6 @@
 package com.itplace.emailmanager.controller;
 
+import com.itplace.emailmanager.security.UserDetails.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.itplace.emailmanager.domain.*;
@@ -7,6 +8,7 @@ import com.itplace.emailmanager.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,5 +87,10 @@ public class RestApiController {
     @GetMapping("/addressee/{id}/mails")
     public List<Mail> getAddresseeMails(@PathVariable Long id){
         return mailService.findByAddresseId(id);
+    }
+
+    @RequestMapping(value="/user", method = RequestMethod.PATCH)
+    public void changePassword(@AuthenticationPrincipal UserDetailsImpl currentUser, @RequestBody String password){
+        senderService.changePassword(currentUser, password);
     }
 }

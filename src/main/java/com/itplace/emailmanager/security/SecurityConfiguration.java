@@ -29,7 +29,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
         http.csrf()
-                .ignoringAntMatchers("/api/**");
+                .ignoringAntMatchers("/api/**")
+                .and().rememberMe().key("uniqueAndSecret").userDetailsService(userDetailsService);
     }
 
     @Bean
