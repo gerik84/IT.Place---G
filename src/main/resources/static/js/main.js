@@ -104,6 +104,10 @@ function sendNow() {
         addressees.push(a);
     });
 
+
+    let subject = $('#new-message-subject').val();
+    let text = $('#new-message-text').val();
+
     let mailTask = new MailTask();
     mailTask.intervalTime = 0;
     mailTask.repeatsLeft = 0;
@@ -111,8 +115,8 @@ function sendNow() {
 
     let mail = new Mail();
     mail.addressee = addressees;
-    mail.subject = 'CUP SUBJECT';
-    mail.message = 'CAP MESSAGE';
+    mail.subject = subject;
+    mail.message = text;
     mail.sender = {id: 1};
 
     // mail.mailTask = mailTask;
@@ -124,7 +128,9 @@ function sendNow() {
         .method("POST")
         .url('/api/mail')
         .send(function (msg) {
-
+            alert('Сообщение добавлено в очередь отправки');
+            $('#new-message-subject').val('');
+            $('#new-message-text').val('');
         });
 }
 
@@ -173,12 +179,18 @@ class Http {
             complete: function (msg, status) {
                 clearTimeout(timeoutInstant);
                 loading.remove();
-            },
-            success: function (msg) {
-                // preload.removeClass('loading');
+                console.log(msg);
+                let response = null;
+                if (msg.responseText != null && msg.responseText.length > 0) {
+                    response = JSON.parse(msg.responseText);
+                }
+                callback(response, msg.status);
 
-                callback(msg);
-            }
+            },
+            // success: function (msg) {
+            //     // preload.removeClass('loading');
+            //     alert('success');
+            // }
         })
     }
 }
