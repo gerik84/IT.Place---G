@@ -82,8 +82,18 @@ body {
 }
 
 .department-name {
-    padding: 10px;
-    /*//background: url("");*/
+    padding: 10px 10px 10px 21px;
+    background: url("../images/folder.png") 0 center no-repeat;
+    background-size: 32px 32px;
+}
+
+.open-tree {
+    background: url("../images/folder-open.png") 0 center no-repeat !important;
+    background-size: 32px 32px !important;
+}
+
+.department-name input {
+    margin-right: 10px;
 }
 
 

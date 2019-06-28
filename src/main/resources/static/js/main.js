@@ -1,4 +1,8 @@
 $().ready(function () {
+    initDepartment();
+});
+
+function initDepartment() {
     new Http()
         .body()
         .method("GET")
@@ -10,7 +14,13 @@ $().ready(function () {
             let html = '';
             if (msg !== null && msg.length > 0) {
                 msg.forEach(function (it) {
-                    html += '<li><div class="list-department-item" id="' + it.id + '"><div class="department-name">' + it.name + '</div></div><ul></ul></li>';
+                    html += '<li id="department_' + it.id + '">' +
+                        '<div class="department-name d-flex align-items-end"  id="department-name-' + it.id + '">' +
+                        '<input type="checkbox" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
+                        '<div class="list-department-item" onclick="toggleDepartment('+it.id+')" >' + it.name + '</div>' +
+                        '</div>' +
+                        '<ul id="child_' + it.id + '"></ul>' +
+                        '</li>';
 
                 });
                 $('#addressee-list').empty().append(html);
@@ -18,48 +28,68 @@ $().ready(function () {
                 $('#addressee-list').empty().append('<div class="empty-table">Ничего не найдено</div>');
             }
         });
+}
 
-    $(document).on('click', '.list-department-item', function (event) {
+function toggleDepartment(id, callback = null) {
+    let root = $('#department_' + id);
 
-        if ($(this).hasClass('open-tree')) {
-            console.log($(this));
-            $(this).parent().find('ul').hide();
-            $(this).removeClass('open-tree');
-            event.preventDefault();
-            return false;
-        }
+    let activeEl = root.find('.department-name');
 
-        let id = $(this).attr('id');
-        $(this).addClass('open-tree');
-        let dom = $(this).parent();
-        new Http()
-            .body()
-            .method("GET")
-            .url('/api/department/' + id + '/addressees')
-            .preloader('#addressee-container')
-            .send(function (msg) {
-                console.log(msg);
-                let html = '';
-                if (msg !== null && msg.length > 0) {
-                    msg.forEach(function (it) {
-                        html += ' <li class="addressee-list-item">' +
-                            '                                <input type="checkbox" value="' + it.name + '" />' +
-                            '                                <div class="d-flex flex-column">' +
-                            '                                    <div>' + it.name + '</div>' +
-                            '                                    <div class="font-small">' + it.email + '</div>' +
-                            '                                </div></li>';
-                    });
-                    html += '';
-                    dom.find('ul').empty();
-                    dom.find('ul').show();
-                    dom.find('ul').append(html);
-                } else {
-                    // $('#addressee-list').empty().append('<div class="empty-table">Ничего не найдено</div>');
-                }
-            });
+    if (activeEl.hasClass('open-tree')) {
+        root.find('ul').hide();
+        activeEl.removeClass('open-tree');
         return false;
-    })
-});
+    }
+
+
+    activeEl.addClass('open-tree');
+
+    new Http()
+        .body()
+        .method("GET")
+        .url('/api/department/' + id + '/addressees')
+        .preloader('#addressee-container')
+        .send(function (msg) {
+            console.log(msg);
+            let html = '';
+            if (msg !== null && msg.length > 0) {
+                msg.forEach(function (it) {
+                    html += ' <li class="addressee-list-item">' +
+                        '                                <input type="checkbox" value="' + it.name + '" />' +
+                        '                                <div class="d-flex flex-column">' +
+                        '                                    <div>' + it.name + '</div>' +
+                        '                                    <div class="font-small">' + it.email + '</div>' +
+                        '                                </div></li>';
+                });
+                html += '';
+                root.find('ul').empty();
+                root.find('ul').show();
+                root.find('ul').append(html);
+
+                if(callback != null) {
+                    callback();
+                }
+            } else {
+                // $('#addressee-list').empty().append('<div class="empty-table">Ничего не найдено</div>');
+            }
+        });
+    return false;
+}
+
+
+function selectAll(id, state) {
+    console.log(state);
+
+    $('#child_' + id + ' li input').prop('checked', state);
+    //
+    if (state && !$('#department-name-' + id).hasClass('open-tree')) {
+        toggleDepartment(id, function () {
+            $('#department_' + id + ' li input').prop('checked', state);
+        })
+    } else {
+        $('#department_' + id + ' li input').prop('checked', state);
+    }
+}
 
 class Http {
 
