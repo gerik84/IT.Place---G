@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Service
 public class SenderService extends BaseRepository<SenderRepository, Sender> {
-
     @Autowired
     RoleRepository roleRepository;
 
@@ -28,5 +27,4 @@ public class SenderService extends BaseRepository<SenderRepository, Sender> {
         }
         return null;
     }
-
 }

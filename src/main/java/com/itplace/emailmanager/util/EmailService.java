@@ -49,6 +49,6 @@ public class EmailService {
         emailSender.setHost(sender.getSmtp());
         emailSender.setPort(sender.getPort());
         emailSender.setUsername(sender.getEmail());
-        emailSender.setPassword(sender.getPassword());
+        emailSender.setPassword(sender.getEmailPassword());
     }
 }

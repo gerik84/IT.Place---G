@@ -9,6 +9,8 @@ public class Sender extends BaseIdentifierEntity {
 
     private String password;
 
+    private String emailPassword;
+
     private Integer port;
 
     private String smtp;
@@ -48,11 +50,19 @@ public class Sender extends BaseIdentifierEntity {
         this.smtp = smtp;
     }
 
+    public String getEmailPassword() {
+        return emailPassword;
+    }
+
+    public void setEmailPassword(String emailPassword) {
+        this.emailPassword = emailPassword;
+    }
+
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = (password);
     }
 }

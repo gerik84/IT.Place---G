@@ -13,4 +13,5 @@ public interface SenderRepository extends LongJpaRepository<Sender> {
 
     List<Sender> findByRole(Role role);
 
+    Sender findByEmailEquals(String email);
 }

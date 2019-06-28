@@ -4,11 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.itplace.emailmanager.domain.*;
 import com.itplace.emailmanager.service.*;
-import com.itplace.emailmanager.util.MailWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
