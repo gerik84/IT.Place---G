@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
@@ -16,7 +16,7 @@
 
 <div class="container" style="height: 93vh; padding: 20px 0 0 0;">
     <div class="row h-100">
-        <div class="col-4" id="addressee-container">
+        <div class="col-4 card" id="addressee-container">
 
             <div class="text-center flex-grow-0">
                 <div class="btn-group">
@@ -35,18 +35,23 @@
         <div class="col-8">
             <div class="card">
                 <div class="card-body">
-                    <input type="text" class="form-control" id="messageSubject" placeholder="Тема сообщения" value="Тестовое сообщение от группы G" minlength="3" disabled><br>
-                    <label for="messageText">Введите текст сообщения:</label><textarea class="form-control" rows="3" id="messageText"></textarea><br>
-                    <div class="text-center">
+                    <h2 class="text-center">Создать новую рассылку</h2>
+<!--                    <input type="text" class="form-control" id="messageSubject" placeholder="Тема сообщения" value="Тестовое сообщение от группы G" minlength="3" disabled><br>-->
+                    <label for="new-message-subject">Тема сообщения:</label>
+                    <input class="form-control" id="new-message-subject"/><br>
+                    <label for="new-message-text">Текст сообщения:</label>
+                    <textarea class="form-control" rows="3" id="new-message-text"></textarea><br>
+                    <div class="text-right">
                         <div class="btn-group">
-                            <button class="btn btn-outline-secondary" id="btnSendLater" data-toggle="modal" data-target="#sendLaterModal" disabled>Сохранить и запланировать</button>
-                            <button class="btn btn-outline-secondary" onclick="sendNow()">Сохранить и отправить</button>
+<!--                            <button class="btn btn-outline-secondary" id="btnSendLater" data-toggle="modal" data-target="#sendLaterModal" disabled>Сохранить и запланировать</button>-->
+                            <button class="btn btn-primary" onclick="sendNow()">Создать рассылку</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="card mt-1">
                 <div class="card-body">
+                    <h2 class="text-center">Выши рассылки</h2>
                     <div class="text-center">
                         <label for="searchMessage"></label><input type="text" class="form-control mt-1" id="searchMessage" placeholder="Фильтр...">
                     </div>
