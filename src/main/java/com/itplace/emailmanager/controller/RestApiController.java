@@ -71,6 +71,16 @@ public class RestApiController {
     }
 
     @RequestMapping(value = "/mail", method = RequestMethod.POST)
+    public void saveMail(@RequestBody Mail mail){
+        if (mail.getMailTask() != null) {
+            mailTaskService.save(mail.getMailTask());
+            MailTask mailTask = mailTaskService.getLastAdded();
+            mail.setMailTask(mailTask);
+        }
+        mailService.save(mail);
+    }
+
+/*    @RequestMapping(value = "/mail", method = RequestMethod.POST)
     public void saveMail(@RequestBody MailWrapper mailWrapper){
         saveMessage(mailWrapper, null);
     }
@@ -136,5 +146,5 @@ public class RestApiController {
             }
             mailService.save(mail);
         }
-    }
+    }*/
 }
