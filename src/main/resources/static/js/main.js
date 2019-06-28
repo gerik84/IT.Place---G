@@ -54,7 +54,7 @@ function toggleDepartment(id, callback = null) {
             let html = '';
             if (msg !== null && msg.length > 0) {
                 msg.forEach(function (it) {
-                    html += ' <li class="addressee-list-item">' +
+                    html += ' <li class="addressee-list-item" onclick="getDetails(' + it.id + ', this)">' +
                         '                                <input type="checkbox" value="' + it.id + '" />' +
                         '                                <div class="d-flex flex-column">' +
                         '                                    <div>' + it.name + '</div>' +
@@ -76,6 +76,25 @@ function toggleDepartment(id, callback = null) {
     return false;
 }
 
+
+function getDetails(id, event) {
+    alert(id);
+    new Http()
+        .method("GET")
+        .url('/api/addressee/' + id + '/mails')
+        .preloader('#mail-list-container')
+        .send(function (msg, code) {
+            // if (code !== 201) {
+            //     alert('Ой, что-то пошло не так, повторите попытку поже');
+            //     return;
+            // }
+            // alert('Сообщение добавлено в очередь отправки');
+            // $('#new-message-subject').val('');
+            // $('#new-message-text').val('');
+        });
+
+    event.preventDefault();
+}
 
 function selectAll(id, state) {
     console.log(state);
@@ -127,7 +146,12 @@ function sendNow() {
         .body(json)
         .method("POST")
         .url('/api/mail')
-        .send(function (msg) {
+        .preloader('body')
+        .send(function (msg, code) {
+            if (code != 201) {
+                alert('Ой, что-то пошло не так, повторите попытку поже');
+                return;
+            }
             alert('Сообщение добавлено в очередь отправки');
             $('#new-message-subject').val('');
             $('#new-message-text').val('');

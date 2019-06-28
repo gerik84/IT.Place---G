@@ -1,5 +1,6 @@
 package com.itplace.emailmanager.repositry;
 
+import com.itplace.emailmanager.domain.Addressee;
 import com.itplace.emailmanager.domain.Mail;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,6 @@ public interface MailRepository extends LongJpaRepository<Mail> {
     List<Mail> findByStatusEquals(Mail.STATUS status);
 
     Mail findBySubjectEquals(String string);
+
+    List<Mail> findByAddresseeId(Long addresseeId);
 }

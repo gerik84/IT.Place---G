@@ -68,12 +68,18 @@ public class RestApiController {
     }
 
     @RequestMapping(value = "/mail", method = RequestMethod.POST)
-    public void saveMail(@RequestBody Mail mail){
+    public ResponseEntity saveMail(@RequestBody Mail mail){
         if (mail.getMailTask() != null) {
             mailTaskService.save(mail.getMailTask());
             MailTask mailTask = mailTaskService.getLastAdded();
             mail.setMailTask(mailTask);
         }
         mailService.save(mail);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/addressee/{id}/mails")
+    public List<Mail> getAddresseeMails(@PathVariable Long id){
+        return mailService.findByAddresseId(id);
     }
 }
