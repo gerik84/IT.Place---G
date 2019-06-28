@@ -1,6 +1,26 @@
-body {
+body, html {
+    font-family: sans-serif;
 }
 
+h2 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+textarea {
+    max-height: 400px;
+}
+.logo {
+        width: 48px;
+    height: 44px;
+}
+
+.card {
+    -webkit-box-shadow: 8px 10px 23px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 8px 10px 23px -6px rgba(0,0,0,0.75);
+    box-shadow: 8px 10px 23px -6px rgba(0,0,0,0.75);
+    margin-bottom: 20px;
+}
 
 .loading {
     position: absolute;
