@@ -14,9 +14,9 @@
 <div th:replace="fragments/navbar :: navbar"></div>
 <div th:replace="fragments/modals :: modals"></div>
 
-<div class="container" style="height: 93vh; padding: 20px 0 0 0;">
+<div class="container" style="height: 90vh; padding: 20px 0 0 0;">
     <div class="row h-100">
-        <div class="col-4 card" id="addressee-container">
+        <div class="col-4 card shadow" id="addressee-container">
 
             <div class="text-center flex-grow-0">
                 <div class="btn-group">
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="col-8">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-body">
                     <h2 class="text-center">Создать новую рассылку</h2>
 <!--                    <input type="text" class="form-control" id="messageSubject" placeholder="Тема сообщения" value="Тестовое сообщение от группы G" minlength="3" disabled><br>-->
@@ -49,14 +49,19 @@
                     </div>
                 </div>
             </div>
-            <div class="card mt-1">
-                <div class="card-body">
-                    <h2 class="text-center">Выши рассылки</h2>
+            <div class="card mt-1 mail-list-container">
+                <div class="card-body ">
+                    <h2 class="text-center">Ваши рассылки</h2>
                     <div class="text-center">
                         <label for="searchMessage"></label><input type="text" class="form-control mt-1" id="searchMessage" placeholder="Фильтр...">
                     </div>
                     <div class="message-wrapper">
-                    Сюда подгружаем список сообщений
+
+                        <ul id="mail-list" style="">
+                        </ul>
+
+
+
                     </div>
                 </div>
             </div>

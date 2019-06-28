@@ -72,7 +72,7 @@ public class RestApiController {
     }
 
     @RequestMapping(value = "/mail", method = RequestMethod.POST)
-    public void saveMail(@RequestBody Mail mail){
+    public ResponseEntity saveMail(@RequestBody Mail mail){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         mail.setSender(senderService.findByEmail(authentication.getName()));
         if (mail.getMailTask() != null) {
@@ -81,6 +81,12 @@ public class RestApiController {
             mail.setMailTask(mailTask);
         }
         mailService.save(mail);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/addressee/{id}/mails")
+    public List<Mail> getAddresseeMails(@PathVariable Long id){
+        return mailService.findByAddresseId(id);
     }
 
     @RequestMapping(value="/user", method = RequestMethod.PATCH)

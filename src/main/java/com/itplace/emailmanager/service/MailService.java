@@ -1,5 +1,6 @@
 package com.itplace.emailmanager.service;
 
+import com.itplace.emailmanager.domain.Addressee;
 import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.repositry.MailRepository;
 import org.springframework.stereotype.Service;
@@ -20,4 +21,10 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
     public Mail findBySubject(String subject){
         return repository.findBySubjectEquals(subject);
     }
+
+    public List<Mail> findByAddresseId(Long id) {
+        return repository.findByAddresseeId(id);
+    }
+
+
 }
