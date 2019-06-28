@@ -19,7 +19,7 @@ function initDepartment() {
                         '<input type="checkbox" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
                         '<div class="list-department-item" onclick="toggleDepartment('+it.id+')" >' + it.name + '</div>' +
                         '</div>' +
-                        '<ul id="child_' + it.id + '"></ul>' +
+                        '<ul class="department-child-list" id="child_' + it.id + '"></ul>' +
                         '</li>';
 
                 });
@@ -55,7 +55,7 @@ function toggleDepartment(id, callback = null) {
             if (msg !== null && msg.length > 0) {
                 msg.forEach(function (it) {
                     html += ' <li class="addressee-list-item">' +
-                        '                                <input type="checkbox" value="' + it.name + '" />' +
+                        '                                <input type="checkbox" value="' + it.id + '" />' +
                         '                                <div class="d-flex flex-column">' +
                         '                                    <div>' + it.name + '</div>' +
                         '                                    <div class="font-small">' + it.email + '</div>' +
@@ -89,6 +89,43 @@ function selectAll(id, state) {
     } else {
         $('#department_' + id + ' li input').prop('checked', state);
     }
+
+
+
+
+}
+
+function sendNow() {
+    let check = $('.department-child-list li input:checked');
+    let addressees = [];
+    check.each(function (key, item) {
+        let a = new Addressee();
+        a.id = $(item).val();
+        addressees.push(a);
+    });
+
+    let mailTask = new MailTask();
+    mailTask.intervalTime = 0;
+    mailTask.repeatsLeft = 0;
+    mailTask.startTime = 0;
+
+    let mail = new Mail();
+    mail.addressee = addressees;
+    mail.subject = 'CUP SUBJECT';
+    mail.message = 'CAP MESSAGE';
+    mail.sender = {id: 1};
+
+    // mail.mailTask = mailTask;
+
+    let json = JSON.stringify(mail);
+    console.log(json);
+    new Http()
+        .body(json)
+        .method("POST")
+        .url('/api/mail')
+        .send(function (msg) {
+
+        });
 }
 
 class Http {
@@ -131,7 +168,7 @@ class Http {
             contentType: "application/json",
             url: this._url,
             dataType: "json",
-            body: this._body,
+            data: this._body,
             async: true,
             complete: function (msg, status) {
                 clearTimeout(timeoutInstant);

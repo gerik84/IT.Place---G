@@ -122,7 +122,7 @@ public class RestApiController {
     }
 
     private void saveMessage(MailWrapper mailWrapper, MailTask mailTask){
-        Mail mail;
+        Entity mail;
         List<Long> iDs = new ArrayList<>();
         mailWrapper.getMessageAddressees().forEach(i -> iDs.add(Long.valueOf(i)));
         if (iDs.size() > 0) {
@@ -135,7 +135,7 @@ public class RestApiController {
 //            Sender sender = senderService.findByEmail(authentication.getName());
             Sender sender = senderService.findById(1L);
 
-            mail = new Mail();
+            mail = new Entity();
             mail.setAddressee(addresseeList);
             mail.setMessage(mailWrapper.getMessageText());
             mail.setSubject(mailWrapper.getMessageSubject());
