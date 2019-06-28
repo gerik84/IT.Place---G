@@ -19,4 +19,6 @@ public interface AddresseeRepository extends LongJpaRepository<Addressee> {
 
     List<Addressee> findByDepartmentId(Long departmentId);
 
+    boolean existsByEmailEquals(String email);
+
 }

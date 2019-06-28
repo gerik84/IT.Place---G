@@ -93,4 +93,9 @@ public class RestApiController {
     public void changePassword(@AuthenticationPrincipal UserDetailsImpl currentUser, @RequestBody String password){
         senderService.changePassword(currentUser, password);
     }
+
+    @RequestMapping(value = "/addressee", method = RequestMethod.POST)
+    public void addAddressee(@RequestBody Addressee addressee){
+        if (!addresseeService.existsByEmailEquals(addressee.getEmail())) addresseeService.save(addressee);
+    }
 }

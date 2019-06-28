@@ -37,4 +37,8 @@ public class AddresseeService extends BaseRepository<AddresseeRepository, Addres
     public List<Addressee> findByDepartmentId(Long departmentId) {
         return repository.findByDepartmentId(departmentId);
     }
+
+    public boolean existsByEmailEquals(String email){
+        return repository.existsByEmailEquals(email);
+    }
 }

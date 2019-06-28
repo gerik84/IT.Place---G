@@ -31,7 +31,6 @@ public class EmailService {
                 mailMessage.setFrom(m.getSender().getEmail());
                 mailMessage.setSubject(m.getSubject());
                 mailMessage.setText(m.getMessage());
-
                 emailSender.send(mailMessage);
             } catch (MailException e) {
                 System.out.println(e.getMessage());
