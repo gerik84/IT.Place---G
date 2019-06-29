@@ -19,6 +19,7 @@ public class EmailService {
 
     @Async
     public CompletableFuture<Mail> sendMail(String toEmail, Mail m) throws InterruptedException {
+        System.out.println("Hello!");
 /*        setMailSenderProps(m.getSender());
         try {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
