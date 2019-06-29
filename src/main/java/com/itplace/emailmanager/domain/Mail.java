@@ -38,6 +38,7 @@ public class Mail extends BaseIdentifierEntity {
     }
 
     public void setStatus(STATUS status) {
+        if (status == STATUS.NEW) attempts = 0;
         this.status = status;
     }
 
@@ -55,23 +56,6 @@ public class Mail extends BaseIdentifierEntity {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public void setNew() {
-        attempts = 0;
-        setStatus(STATUS.NEW);
-    }
-
-    public void setSent(){
-        setStatus(STATUS.SENT);
-    }
-
-    public void setFailed() {
-        setStatus(STATUS.FAILED);
-    }
-
-    public void setCanceled() {
-        setStatus(STATUS.CANCELLED);
     }
 
     public MailTask getMailTask() {
@@ -93,6 +77,7 @@ public class Mail extends BaseIdentifierEntity {
     public enum STATUS {
         NEW,
         SENT,
+        SENDING,
         FAILED,
         CANCELLED
     }

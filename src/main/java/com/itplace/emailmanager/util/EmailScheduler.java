@@ -1,48 +1,49 @@
 package com.itplace.emailmanager.util;
 
 import com.itplace.emailmanager.domain.Mail;
-import com.itplace.emailmanager.domain.MailTask;
 import com.itplace.emailmanager.service.MailService;
-import com.itplace.emailmanager.service.MailTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Component
 public class EmailScheduler {
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
     @Autowired
     private MailService mailService;
-    @Autowired
-    private MailTaskService mailTaskService;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRateString = "${scheduler.fixed.rate}")
     public void emailScheduler(){
-        List<Mail> mailToSend = mailService.findMailsToSend();
-        if (mailToSend.size() > 0) {
-            emailService.sendMail(mailToSend);
-        }
+        List<CompletableFuture<Mail>> completableFutures = new ArrayList<>();
 
-        List<Mail> taskedMail = new ArrayList<>();
-        List<MailTask> mailTaskList = mailTaskService.findTasksToDo();
-        if (mailTaskList.size() > 0) {
-            for (MailTask t: mailTaskList) {
-                if (t.getRepeatsLeft() == 0) {
-                    t.setDone();
-                    mailTaskService.save(t);
+        mailService.findMailToSend().forEach(mail -> {
+            mail.getAddressee().forEach(addressee -> {
+                try {
+                    completableFutures.add(emailService.sendMail(addressee.getEmail(), mail));
+                } catch (InterruptedException e) { // TODO сделать что-нибудь при возникновении исключения
                 }
-                else {
-                    t.setRepeatsLeft(t.getRepeatsLeft() - 1);
-                    t.setStartTime(t.getStartTime() + t.getIntervalTime());
-                    mailTaskService.save(t);
-                    taskedMail.add(t.getMail());
-                }
-            }
-            emailService.sendMail(taskedMail);
-        }
+            });
+        });
+
+        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
+    }
+
+    @Bean
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(100);
+        executor.setMaxPoolSize(100);
+        executor.setQueueCapacity(1000);
+        executor.setThreadNamePrefix("emailSender-");
+        executor.initialize();
+        return executor;
     }
 }

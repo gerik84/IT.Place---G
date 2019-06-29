@@ -55,12 +55,9 @@ public class MailTask extends BaseIdentifierEntity {
         this.status = status;
     }
 
-    public void setDone(){
-        status = STATUS.DONE;
-    }
-
     public enum STATUS {
         NEW,
+        IN_PROGRESS,
         DONE
     }
 }

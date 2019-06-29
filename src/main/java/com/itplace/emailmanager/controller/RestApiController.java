@@ -29,33 +29,6 @@ public class RestApiController {
     @Autowired
     SenderService senderService;
 
-    @GetMapping("/addressees")
-    public List<Addressee> getAddressees(){
-        return addresseeService.findAll();
-    }
-
-    @GetMapping("/addressees/department/{departmentId}")
-    public List<Addressee> getAddresseesByDepartment(@PathVariable Long departmentId){
-        return addresseeService.findByDepartmentId(departmentId);
-    }
-
-    @GetMapping("/mails/page/{pageNo}/{pageSize}/{sorted}")
-    public List<Mail> getMailsByPageNo(@PathVariable int pageNo, @PathVariable int pageSize, @PathVariable String sorted){
-        String sort = null;
-        Sort.Direction direction = null;
-        if (sorted.equals("asc") || sorted.equals("dsc")) {
-            sort = "sort";
-            direction = sorted.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        }
-        return mailService.findAll(pageNo, pageSize, sort, direction);
-    }
-
-    @GetMapping("/mail/{mailId}")
-    public Mail getMailById(@PathVariable Long mailId){
-        return mailService.findById(mailId);
-    }
-
-
     @RequestMapping(value = "/departments", method = RequestMethod.GET)
     public ResponseEntity getDeportment() {
         return createResponse(departmentService.findAll());
@@ -66,27 +39,11 @@ public class RestApiController {
         return createResponse(addresseeService.findByDepartmentId(department));
     }
 
-    private ResponseEntity createResponse(Object body) {
-        return body == null ?  new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK) :
-                new ResponseEntity<>(body, HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/mail", method = RequestMethod.POST)
     public ResponseEntity saveMail(@RequestBody Mail mail){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        mail.setSender(senderService.findByEmail(authentication.getName()));
-        if (mail.getMailTask() != null) {
-            mailTaskService.save(mail.getMailTask());
-            MailTask mailTask = mailTaskService.getLastAdded();
-            mail.setMailTask(mailTask);
-        }
-        mailService.save(mail);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
+        Mail isCreated = mailService.saveMail(mail);
 
-    @GetMapping("/addressee/{id}/mails")
-    public List<Mail> getAddresseeMails(@PathVariable Long id){
-        return mailService.findByAddresseId(id);
+        return new ResponseEntity<>(isCreated != null ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST); // TODO нужен более подходящий ответ в случае неудачи
     }
 
     @RequestMapping(value="/user", method = RequestMethod.PATCH)
@@ -96,6 +53,12 @@ public class RestApiController {
 
     @RequestMapping(value = "/addressee", method = RequestMethod.POST)
     public void addAddressee(@RequestBody Addressee addressee){
-        if (!addresseeService.existsByEmailEquals(addressee.getEmail())) addresseeService.save(addressee);
+        addresseeService.save(addressee);
     }
+
+    private ResponseEntity createResponse(Object body) {
+        return body == null ?  new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK) :
+                new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
 }
