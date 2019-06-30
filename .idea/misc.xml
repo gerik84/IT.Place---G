@@ -10,5 +10,9 @@
       </list>
     </option>
   </component>
+  <component name="ProjectResources">
+    <resource url="http://www.springframework.org/tags" location="$PROJECT_DIR$" />
+    <resource url="http://www.springframework.org/tags/form" location="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
 </project>
