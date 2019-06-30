@@ -19,6 +19,6 @@ public interface MailRepository extends LongJpaRepository<Mail> {
 
     List<Mail> findByAddresseeId(Long addresseeId);
 
-    List<Mail> findByWhenDeletedNotNullAndMailTask_StartTimeBeforeAndMailTask_RepeatsLeftNotAndMailTask_StatusNotAndStatusNot
-            (Long currentTime, Integer repeatsLeft, MailTask.STATUS taskStatusDone, Mail.STATUS mailStatusSending);
+    List<Mail> findByWhenDeletedNotNullAndMailTask_StartTimeBeforeAndMailTask_StatusNotAndStatusNot
+            (Long currentTime, MailTask.STATUS taskStatusDone, Mail.STATUS mailStatusSending);
 }

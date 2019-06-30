@@ -76,8 +76,9 @@ public class Mail extends BaseIdentifierEntity {
 
     public enum STATUS {
         NEW,
-        SENT,
+        READY,
         SENDING,
+        SENT,
         FAILED,
         CANCELLED
     }

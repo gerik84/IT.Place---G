@@ -35,6 +35,9 @@ public class MailTask extends BaseIdentifierEntity {
         return repeatsLeft;
     }
 
+    /**
+     * @param repeatsLeft = используем -1 для создания бесконечной задачи
+     */
     public void setRepeatsLeft(Integer repeatsLeft) {
         this.repeatsLeft = repeatsLeft;
     }

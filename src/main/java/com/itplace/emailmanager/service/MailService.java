@@ -21,22 +21,13 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         return repository.findBySubjectIgnoreCaseLike(subject);
     }
 
+    /*
+     * Не удаленные сообщения с временем отправки меньше текущего,
+     * с незавершенной задачей и не стоящие в очереди на отправку
+     */
     public List<Mail> findMailToSend() {
-        /*return repository.findByWhenDeletedNotNullAndMailTask_StartTimeBeforeAndMailTask_RepeatsLeftNotAndMailTask_StatusNotAndStatusNot
-                (System.currentTimeMillis(), 0, MailTask.STATUS.DONE, Mail.STATUS.SENDING);*/
-
-        List<Mail> mailList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Mail mail = new Mail();
-            List<Addressee> addresseeList = new ArrayList<>();
-            Addressee addressee1 = new Addressee();
-            addressee1.setEmail("1.2@3.com");
-            Addressee addressee2 = new Addressee();
-            addressee2.setEmail("4.5@6.com");
-            mail.setAddressee(addresseeList);
-            mailList.add(mail);
-        }
-        return mailList;
+        return repository.findByWhenDeletedNotNullAndMailTask_StartTimeBeforeAndMailTask_StatusNotAndStatusNot
+                (System.currentTimeMillis(), MailTask.STATUS.DONE, Mail.STATUS.SENDING);
     }
 
     public Mail findBySubject(String subject){
@@ -61,6 +52,12 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         mailTask = mailTaskService.getLastAdded();
         mail.setMailTask(mailTask);
         return repository.save(mail);
+    }
+
+    public void changeStatus(Mail mail, Mail.STATUS status){
+        // TODO добавить логгирование
+        mail.setStatus(status);
+        repository.save(mail);
     }
 
 
