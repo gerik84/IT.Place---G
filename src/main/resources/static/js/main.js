@@ -150,7 +150,7 @@ function sendNow() {
     mail.addressee = addressees;
     mail.subject = subject;
     mail.message = text;
-    mail.sender = {id: 1};
+    mail.sender = {id: 100000001};
 
     let json = JSON.stringify(mail);
     console.log(json);

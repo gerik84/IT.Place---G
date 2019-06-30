@@ -2,7 +2,7 @@ package com.itplace.emailmanager.controller;
 
 import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.service.MailService;
-import com.itplace.emailmanager.service.EmailService;
+import com.itplace.emailmanager.service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +17,7 @@ import java.util.concurrent.Executor;
 @Component
 public class EmailScheduler {
     @Autowired
-    private EmailService emailService;
+    private EmailSenderService emailService;
     @Autowired
     private MailService mailService;
 
@@ -33,17 +33,16 @@ public class EmailScheduler {
                 }
             });
         });
-
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
     }
 
     @Bean
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(100);
+        executor.setCorePoolSize(mailService.findMailToSend().size());
         executor.setMaxPoolSize(100);
         executor.setQueueCapacity(1000);
-        executor.setThreadNamePrefix("emailSender-");
+        executor.setThreadNamePrefix("emailSenderThread-");
         executor.initialize();
         return executor;
     }

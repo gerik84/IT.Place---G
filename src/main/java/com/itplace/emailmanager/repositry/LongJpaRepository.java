@@ -17,5 +17,4 @@ public interface LongJpaRepository<T extends BaseIdentifierEntity> extends JpaRe
     List<T> findByWhenUpdatedBetween(Long from, Long to, Pageable pageable);
 
     List<T> findByWhenDeletedBetween(Long from, Long to, Pageable pageable);
-
 }

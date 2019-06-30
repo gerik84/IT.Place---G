@@ -6,9 +6,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Addressee extends BaseIdentifierEntity {
     private String name;
-
     private String email;
-
     @ManyToOne
     private Department department;
 

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class EmailService {
+public class EmailSenderService {
     @Autowired
     private JavaMailSenderImpl emailSender;
     @Autowired
@@ -43,11 +43,12 @@ public class EmailService {
             }
             // если задача закончилась
             if (currentTask.getRepeatsLeft() == 0) currentTask.setStatus(MailTask.STATUS.DONE);
-            // елси задача бесконечна
+            // если задача бесконечна
             if (currentTask.getRepeatsLeft() == -1) {
                 currentTask.setStartTime(currentTask.getStartTime() + currentTask.getIntervalTime());
                 currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
             }
+            mailService.changeStatus(mail, Mail.STATUS.SENT);
         } catch (MailException e) {
             // даем письму 5 попыток
             if (mail.getAttempts() < 5) {

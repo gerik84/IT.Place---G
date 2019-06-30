@@ -39,6 +39,11 @@ public class AddresseeService extends BaseRepository<AddresseeRepository, Addres
     }
 
     public boolean existsByEmailEquals(String email){
-        return repository.existsByEmailEquals(email);
+        return repository.existsByEmailEqualsIgnoreCase(email);
+    }
+
+    public Addressee saveNewAddressee(Addressee addressee) {
+        if (!repository.existsByEmailEqualsIgnoreCase(addressee.getEmail())) return repository.save(addressee);
+        else return null;
     }
 }

@@ -36,14 +36,12 @@
             <div class="card shadow">
                 <div class="card-body">
                     <h2 class="text-center">Создать новую рассылку</h2>
-<!--                    <input type="text" class="form-control" id="messageSubject" placeholder="Тема сообщения" value="Тестовое сообщение от группы G" minlength="3" disabled><br>-->
                     <label for="new-message-subject">Тема сообщения:</label>
                     <input class="form-control" id="new-message-subject"/><br>
                     <label for="new-message-text">Текст сообщения:</label>
                     <textarea class="form-control" rows="3" id="new-message-text"></textarea><br>
                     <div class="text-right">
                         <div class="btn-group">
-<!--                            <button class="btn btn-outline-secondary" id="btnSendLater" data-toggle="modal" data-target="#sendLaterModal" disabled>Сохранить и запланировать</button>-->
                             <button class="btn btn-primary" onclick="sendNow()">Создать рассылку</button>
                         </div>
                     </div>
@@ -56,12 +54,8 @@
                         <label for="searchMessage"></label><input type="text" class="form-control mt-1" id="searchMessage" placeholder="Фильтр...">
                     </div>
                     <div class="message-wrapper">
-
                         <ul id="mail-list" style="">
                         </ul>
-
-
-
                     </div>
                 </div>
             </div>

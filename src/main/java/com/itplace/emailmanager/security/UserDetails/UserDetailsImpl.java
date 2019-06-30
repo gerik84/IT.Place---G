@@ -39,21 +39,21 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return sender.getWhenDeleted() == null;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return sender.getWhenDeleted() == null;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return sender.getWhenDeleted() == null;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return sender.getWhenDeleted() == null;
     }
 }

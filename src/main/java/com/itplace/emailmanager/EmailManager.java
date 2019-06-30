@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableAsync
 public class EmailManager {
-
     public static void main(String[] args) {
         SpringApplication.run(EmailManager.class, args);
     }
