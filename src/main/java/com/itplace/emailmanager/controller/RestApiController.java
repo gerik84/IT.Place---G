@@ -4,11 +4,17 @@ import com.itplace.emailmanager.domain.Addressee;
 import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.domain.MailTask;
 import com.itplace.emailmanager.domain.Sender;
+import com.itplace.emailmanager.security.UserDetails.UserDetailsImpl;
+import com.itplace.emailmanager.domain.Addressee;
+import com.itplace.emailmanager.domain.Mail;
+import com.itplace.emailmanager.domain.MailTask;
+import com.itplace.emailmanager.domain.Sender;
 import com.itplace.emailmanager.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,8 +85,6 @@ public class RestApiController {
     public ResponseEntity saveMail(@RequestBody Mail mail){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         mail.setSender(senderService.findByEmail(authentication.getName()));
-
-
         if (mail.getMailTask() != null) {
             mailTaskService.save(mail.getMailTask());
             MailTask mailTask = mailTaskService.getLastAdded();
@@ -101,5 +105,10 @@ public class RestApiController {
     @GetMapping("/addressee/{id}/mails")
     public List<Mail> getAddresseeMails(@PathVariable Long id){
         return mailService.findByAddresseId(id);
+    }
+
+    @RequestMapping(value="/user", method = RequestMethod.PATCH)
+    public void changePassword(@AuthenticationPrincipal UserDetailsImpl currentUser, @RequestBody String password){
+        senderService.changePassword(currentUser, password);
     }
 }
