@@ -1,6 +1,5 @@
 package com.itplace.emailmanager.service;
 
-import com.itplace.emailmanager.domain.Addressee;
 import com.itplace.emailmanager.domain.BaseIdentifierEntity;
 import com.itplace.emailmanager.repositry.LongJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,11 @@ import java.util.Optional;
 
 interface ServiceInterface<T extends BaseIdentifierEntity> {
 
-    void save(T model);
+    T save(T model);
 
     void delete(T model);
 
-    List<T> findAll(int page, int pageSize, String sort, Sort.Direction direction);
+    List<T> findAll(int page, int pageSize, String sort, String direction);
     List<T> findAll();
 
     T findById(Long id);
@@ -36,12 +35,14 @@ interface ServiceInterface<T extends BaseIdentifierEntity> {
 
 public abstract class BaseRepository<R extends LongJpaRepository, T extends BaseIdentifierEntity> implements ServiceInterface<T> {
 
+    private static final Integer MAX = 5000;
+
     @Autowired
     protected R repository;
 
     @Override
-    public void save(T model) {
-        repository.save(model);
+    public T save(T model) {
+        return (T) repository.save(model);
     }
 
     @Override
@@ -50,17 +51,33 @@ public abstract class BaseRepository<R extends LongJpaRepository, T extends Base
     }
 
     @Override
-    public List<T> findAll(int page, int pageSize, String sort, Sort.Direction direction) {
+    public List<T> findAll(int page, int pageSize, String sort, String direction) {
+
+        return repository.findByWhenDeletedIsNull(createPageable(page, pageSize, sort, direction));
+    }
+
+    protected Pageable createPageable(Integer page, Integer pageSize, String sort, String direction) {
+        if (page == null) {
+            page = 0;
+        }
+
+        if (pageSize == null) {
+            pageSize = MAX;
+        }
+
+        if (direction == null) {
+            direction = "ASC";
+        }
+
         Sort sortBy = null;
         if (sort != null) {
-            sortBy = Sort.by(direction, sort);
+            sortBy = Sort.by(Sort.Direction.fromString(direction), sort);
         }
         Pageable pageable = PageRequest.of(page, pageSize);
         if (sortBy != null) {
             pageable = PageRequest.of(page, pageSize, sortBy);
         }
-        return repository.findByWhenDeletedIsNull(pageable);
-//        return all.get().collect(Collectors.toList());
+        return pageable;
     }
 
     @Override

@@ -176,22 +176,45 @@ textarea {
     font-size: 14px;
 }
 
-#mail-list .sent {
-    color: #e0a800;
+#table-mails {
+    font-size: 14px;
 }
 
-#mail-list .delivered {
+#table-body .sent {
     color: green;
 }
 
-#mail-list .failed {
+#table-body .delivered {
+    color: green;
+}
+
+#table-body .failed {
     color: red;
 }
 
-#mail-list .canceled {
+#table-body .canceled {
     color: gray;
 }
 
 .mail-list-container {
+    /*display: none;*/
+}
+
+
+.dataTables_info, .dataTables_paginate, .dataTables_filter {
+    font-size: 14px;
+}
+
+#alert-dynamic {
     display: none;
+    margin: 0;
+}
+
+.alert-container {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
 }

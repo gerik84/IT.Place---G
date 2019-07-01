@@ -7,16 +7,21 @@
     <meta charset="UTF-8">
     <title>Email manager</title>
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link href="/css/jquery.dataTables.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/small-business.css">
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
+
 <div th:replace="fragments/navbar :: navbar"></div>
 <div th:replace="fragments/modals :: modals"></div>
 
 <div class="container" style="height: 90vh; padding: 20px 0 0 0;">
+
+
     <div class="row h-100">
-        <div class="col-4 card shadow" id="addressee-container">
+
+        <div class="col-4 card shadow p-3" id="addressee-container">
 
             <div class="text-center flex-grow-0">
                 <div class="btn-group">
@@ -34,7 +39,7 @@
         </div>
         <div class="col-8">
             <div class="card shadow">
-                <div class="card-body">
+                <div class="card-body" id="create-message-container">
                     <h2 class="text-center">Создать новую рассылку</h2>
 <!--                    <input type="text" class="form-control" id="messageSubject" placeholder="Тема сообщения" value="Тестовое сообщение от группы G" minlength="3" disabled><br>-->
                     <label for="new-message-subject">Тема сообщения:</label>
@@ -49,17 +54,29 @@
                     </div>
                 </div>
             </div>
-            <div class="card mt-1 mail-list-container">
+            <div class="card mt-1 mail-list-container shadow">
                 <div class="card-body ">
                     <h2 class="text-center">Ваши рассылки</h2>
-                    <div class="text-center">
-                        <label for="searchMessage"></label><input type="text" class="form-control mt-1" id="searchMessage" placeholder="Фильтр...">
-                    </div>
+                    <!--                    <div class="text-center">-->
+                    <!--                        <label for="searchMessage"></label><input type="text" class="form-control mt-1" id="searchMessage" placeholder="Фильтр...">-->
+                    <!--                    </div>-->
                     <div class="message-wrapper">
 
-                        <ul id="mail-list" style="">
-                        </ul>
+                        <table id="table-mails">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Тема</th>
+                                <th scope="col">Получатель(и)</th>
+                                <th scope="col">Статус</th>
+                                <th scope="col">Создано</th>
+                            </tr>
+                            </thead>
+                            <tbody id="table-body">
 
+
+                            </tbody>
+                        </table>
 
 
                     </div>
@@ -71,6 +88,7 @@
 
 <script src="/vendor/jquery/jquery.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
 <script src="/js/main.js"></script>
 <script src="/js/entity.js"></script>
 </body>

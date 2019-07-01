@@ -1,11 +1,13 @@
 package com.itplace.emailmanager.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import com.itplace.emailmanager.domain.*;
+import com.itplace.emailmanager.domain.Addressee;
+import com.itplace.emailmanager.domain.Mail;
+import com.itplace.emailmanager.domain.MailTask;
+import com.itplace.emailmanager.domain.Sender;
 import com.itplace.emailmanager.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -39,13 +41,17 @@ public class RestApiController {
 
     @GetMapping("/mails/page/{pageNo}/{pageSize}/{sorted}")
     public List<Mail> getMailsByPageNo(@PathVariable int pageNo, @PathVariable int pageSize, @PathVariable String sorted){
-        String sort = null;
-        Sort.Direction direction = null;
-        if (sorted.equals("asc") || sorted.equals("dsc")) {
-            sort = "sort";
-            direction = sorted.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        }
-        return mailService.findAll(pageNo, pageSize, sort, direction);
+        return mailService.findAll(pageNo, pageSize, sorted, null);
+    }
+
+    @GetMapping("/mails")
+    public List<Mail> getMailsWithSenderId(@RequestParam(value = "first", required = false) Integer _first,
+                                           @RequestParam(value = "max", required = false) Integer _max,
+                                           @RequestParam(value = "sort", required = false) String _sort,
+                                           @RequestParam(value = "direction", required = false) String _direction) {
+
+        Long sender_id = senderService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
+        return mailService.findByAll(sender_id, _first, _max, _sort, _direction);
     }
 
     @GetMapping("/mail/{mailId}")
@@ -73,13 +79,23 @@ public class RestApiController {
     public ResponseEntity saveMail(@RequestBody Mail mail){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         mail.setSender(senderService.findByEmail(authentication.getName()));
+
+
         if (mail.getMailTask() != null) {
             mailTaskService.save(mail.getMailTask());
             MailTask mailTask = mailTaskService.getLastAdded();
             mail.setMailTask(mailTask);
         }
-        mailService.save(mail);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        Sender sender = senderService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        mail.setSender(sender);
+
+        Mail save = mailService.save(mail);
+        if (save != null && save.getId() != null) {
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     @GetMapping("/addressee/{id}/mails")
