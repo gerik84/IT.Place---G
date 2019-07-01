@@ -9,7 +9,6 @@ import com.itplace.emailmanager.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +41,8 @@ public class RestApiController {
         Long sender_id = senderService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
         return mailService.findByAll(sender_id, _first, _max, _sort, _direction);
     }
+
+
 
     @GetMapping("/mails/page/{pageNo}/{pageSize}/{sorted}")
     public List<Mail> getMailsByPageNo(@PathVariable int pageNo, @PathVariable int pageSize, @PathVariable String sorted){
@@ -83,7 +84,7 @@ public class RestApiController {
     public ResponseEntity addAddressee(@RequestBody Addressee addressee){
         Addressee created = addresseeService.saveNewAddressee(addressee);
 
-        return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT); 
+        return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "/department", method = RequestMethod.POST)
@@ -93,18 +94,13 @@ public class RestApiController {
         return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
 
-    // изменение объектов
-
-
-
-    // управление пользователями
-
     @RequestMapping(value = "/sender", method = RequestMethod.POST)
     public ResponseEntity addSender(@RequestBody Sender sender){
         Sender created = senderService.saveNewSender(sender);
 
         return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
+
 
     @RequestMapping(value="/user", method = RequestMethod.PATCH)
     public void changePassword(@AuthenticationPrincipal UserDetailsImpl currentUser, @RequestBody String password){
@@ -115,4 +111,5 @@ public class RestApiController {
         return body == null ?  new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK) :
                 new ResponseEntity<>(body, HttpStatus.OK);
     }
+
 }

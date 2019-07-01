@@ -143,7 +143,9 @@ function translateStatus(status) {
         case 'NEW':
             result = 'Новое';
             break;
-        case 'SENT':
+        case 'SENDING':
+            result = 'В очереди';
+            break; case 'SENT':
             result = 'Отправлено';
             break;
         case 'FAILED':
