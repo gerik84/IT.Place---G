@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "scheduler.fixed.rate",
+      "type": "java.lang.String",
+      "description": "Description for scheduler.fixed.rate."
+    }
+  ] }

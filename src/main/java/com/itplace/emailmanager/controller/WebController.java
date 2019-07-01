@@ -18,9 +18,7 @@ public class WebController {
     }
 
     @GetMapping("/admin")
-    public String admin(Model model) {
-        model.addAttribute("currentUserId", senderService.findByEmail
-                (SecurityContextHolder.getContext().getAuthentication().getName()).getId());
+    public String admin() {
         return "admin";
     }
 }

@@ -8,7 +8,6 @@ public abstract class BaseEntity {
     private Long whenUpdated;
     private Long whenDeleted = null;
 
-
     public BaseEntity() {
         setWhenCreated(System.currentTimeMillis());
     }
@@ -37,6 +36,4 @@ public abstract class BaseEntity {
     public void setWhenDeleted(Long whenDeleted) {
         this.whenDeleted = whenDeleted;
     }
-
-
 }

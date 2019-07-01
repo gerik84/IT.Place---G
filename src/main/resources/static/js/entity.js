@@ -5,6 +5,7 @@ class Mail {
     addressee;
     sender;
     mailTask;
+    mailLog
 }
 
 class MailTask {

@@ -24,7 +24,6 @@ public class SenderService extends BaseRepository<SenderRepository, Sender> {
     }
 
     public List<Sender> findByRole(Role.ROLE role) {
-
         Optional<Role> byId = roleRepository.findById(role);
         if (byId.isPresent()) {
             return repository.findByRole(byId.orElseGet(null));
@@ -35,5 +34,10 @@ public class SenderService extends BaseRepository<SenderRepository, Sender> {
     public void changePassword(UserDetailsImpl currentUser, String password) {
         Sender sender = repository.findByEmailEquals(currentUser.getUsername());
         sender.setPassword(passwordEncoder.encode(password));
+    }
+
+    public Sender saveNewSender(Sender sender){
+        if (repository.existsByEmailEqualsIgnoreCase(sender.getEmail())) return repository.save(sender);
+        else return null;
     }
 }

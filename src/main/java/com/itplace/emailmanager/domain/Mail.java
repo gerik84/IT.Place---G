@@ -1,5 +1,8 @@
 package com.itplace.emailmanager.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -10,6 +13,9 @@ public class Mail extends BaseIdentifierEntity {
     private Integer attempts = 0;
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Addressee> addressee;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<MailLog> mailLog;
     @ManyToOne
     private Sender sender;
     @OneToOne
@@ -38,6 +44,7 @@ public class Mail extends BaseIdentifierEntity {
     }
 
     public void setStatus(STATUS status) {
+        if (status == STATUS.NEW) attempts = 0;
         this.status = status;
     }
 
@@ -57,23 +64,6 @@ public class Mail extends BaseIdentifierEntity {
         this.message = message;
     }
 
-    public void setNew() {
-        attempts = 0;
-        setStatus(STATUS.NEW);
-    }
-
-    public void setSent(){
-        setStatus(STATUS.SENT);
-    }
-
-    public void setFailed() {
-        setStatus(STATUS.FAILED);
-    }
-
-    public void setCanceled() {
-        setStatus(STATUS.CANCELLED);
-    }
-
     public MailTask getMailTask() {
         return mailTask;
     }
@@ -90,8 +80,22 @@ public class Mail extends BaseIdentifierEntity {
         this.attempts = attempts;
     }
 
+    public void setAttempts(Integer attempts) {
+        this.attempts = attempts;
+    }
+
+    public List<MailLog> getMailLog() {
+        return mailLog;
+    }
+
+    public void setMailLog(List<MailLog> mailLog) {
+        this.mailLog = mailLog;
+    }
+
     public enum STATUS {
         NEW,
+        READY,
+        SENDING,
         SENT,
         FAILED,
         CANCELLED

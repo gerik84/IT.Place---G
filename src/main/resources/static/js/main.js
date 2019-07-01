@@ -205,7 +205,6 @@ function sendNow() {
     mail.subject = subject;
     mail.message = text;
 
-
     let json = JSON.stringify(mail);
     new Http()
         .body(json)
