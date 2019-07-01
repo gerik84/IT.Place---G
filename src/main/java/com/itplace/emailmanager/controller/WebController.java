@@ -13,9 +13,7 @@ public class WebController {
     SenderService senderService;
 
     @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("currentUserId", senderService.findByEmail
-                (SecurityContextHolder.getContext().getAuthentication().getName()).getId());
+    public String index() {
         return "index";
     }
 
