@@ -37,10 +37,10 @@ public class AddresseeImportExport {
     }
 
     public boolean exportToFile(List<Addressee> addresseeList, String stringPath) {
-        File outputDir = new File(stringPath);
+        File outputFile = new File(stringPath);
 
-        if (outputDir.isDirectory() && outputDir.canWrite()) {
-            try (Writer writer = new FileWriter(stringPath)) {
+        if (outputFile.isFile() && outputFile.canWrite()) {
+            try (Writer writer = new FileWriter(outputFile)) {
                 StatefulBeanToCsv statefulBeanToCsv = new StatefulBeanToCsvBuilder(writer)
                         .withSeparator(CSVWriter.DEFAULT_SEPARATOR).build();
                 statefulBeanToCsv.write(addresseeList);
