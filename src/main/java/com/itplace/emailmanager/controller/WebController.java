@@ -2,10 +2,15 @@ package com.itplace.emailmanager.controller;
 
 import com.itplace.emailmanager.service.SenderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.Collection;
+import java.util.List;
 
 @Controller
 public class WebController {
@@ -16,7 +21,7 @@ public class WebController {
     public String index(Model model) {
         model.addAttribute("currentUserId", senderService.findByEmail
                 (SecurityContextHolder.getContext().getAuthentication().getName()).getId());
-       return "index";
+        return "index";
     }
 
     @GetMapping("/admin")

@@ -28,9 +28,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.csrf()
-                .ignoringAntMatchers("/api/**")
-                .and().rememberMe().key("uniqueAndSecret").userDetailsService(userDetailsService);
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                    .antMatchers("/login*", "/resources/**").permitAll()
+                    .antMatchers("/index", "/api/**").hasAnyRole("ROLE_ADMIN", "ROLE_USER")
+                    .antMatchers("/admin").hasAnyRole("ROLE_ADMIN")
+                .and().logout()
+                    .permitAll().deleteCookies("JSESSIONID")
+                .and().rememberMe()
+                    .key("uniqueAndSecret").userDetailsService(userDetailsService);
     }
 
     @Bean
