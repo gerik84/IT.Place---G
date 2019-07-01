@@ -9,6 +9,7 @@ import java.util.List;
 @Entity
 public class Mail extends BaseIdentifierEntity {
     private String subject;
+    @Lob
     private String message;
     private Integer attempts = 0;
     @ManyToMany(fetch = FetchType.EAGER)
@@ -94,7 +95,7 @@ public class Mail extends BaseIdentifierEntity {
 
     public enum STATUS {
         NEW,
-        READY,
+        ERROR,
         SENDING,
         SENT,
         FAILED,

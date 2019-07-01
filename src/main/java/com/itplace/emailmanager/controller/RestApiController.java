@@ -1,6 +1,7 @@
 package com.itplace.emailmanager.controller;
 
 import com.itplace.emailmanager.domain.Addressee;
+import com.itplace.emailmanager.domain.Department;
 import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.domain.Sender;
 import com.itplace.emailmanager.security.UserDetails.UserDetailsImpl;
@@ -29,19 +30,7 @@ public class RestApiController {
     @Autowired
     SenderService senderService;
 
-    @RequestMapping(value = "/mail", method = RequestMethod.POST)
-    public ResponseEntity saveMail(@RequestBody Mail mail){
-        mail.setSender(senderService.findByEmail
-                (SecurityContextHolder.getContext().getAuthentication().getName()));
-        Mail created = mailService.saveNewMail(mail);
-
-        return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
-    }
-
-    @GetMapping("/mails/page/{pageNo}/{pageSize}/{sorted}")
-    public List<Mail> getMailsByPageNo(@PathVariable int pageNo, @PathVariable int pageSize, @PathVariable String sorted){
-        return mailService.findAll(pageNo, pageSize, sorted, null);
-    }
+    // получение данных
 
     @GetMapping("/mails")
     public List<Mail> getMailsWithSenderId(@RequestParam(value = "first", required = false) Integer _first,
@@ -53,18 +42,11 @@ public class RestApiController {
         return mailService.findByAll(sender_id, _first, _max, _sort, _direction);
     }
 
-    @RequestMapping(value = "/addressee", method = RequestMethod.POST)
-    public ResponseEntity addAddressee(@RequestBody Addressee addressee){
-        Addressee created = addresseeService.saveNewAddressee(addressee);
 
-        return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
-    }
 
-    @RequestMapping(value = "/sender", method = RequestMethod.POST)
-    public ResponseEntity addSender(@RequestBody Sender sender){
-        Sender created = senderService.saveNewSender(sender);
-
-        return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
+    @GetMapping("/mails/page/{pageNo}/{pageSize}/{sorted}")
+    public List<Mail> getMailsByPageNo(@PathVariable int pageNo, @PathVariable int pageSize, @PathVariable String sorted){
+        return mailService.findAll(pageNo, pageSize, sorted, null);
     }
 
     @RequestMapping(value = "/departments", method = RequestMethod.GET)
@@ -77,6 +59,49 @@ public class RestApiController {
         return createResponse(addresseeService.findByDepartmentId(department));
     }
 
+    @GetMapping("/addressee/{id}/mails")
+    public List<Mail> getAddresseeMails(@PathVariable Long id){
+        return mailService.findByAddresseId(id);
+    }
+
+    @GetMapping("/senders")
+    public ResponseEntity getSenders(){
+        return createResponse(senderService.findAll());
+    }
+
+    // сохранение объектов
+
+    @RequestMapping(value = "/mail", method = RequestMethod.POST)
+    public ResponseEntity saveMail(@RequestBody Mail mail){
+        mail.setSender(senderService.findByEmail
+                (SecurityContextHolder.getContext().getAuthentication().getName()));
+        Mail created = mailService.saveNewMail(mail);
+
+        return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
+    }
+
+    @RequestMapping(value = "/addressee", method = RequestMethod.POST)
+    public ResponseEntity addAddressee(@RequestBody Addressee addressee){
+        Addressee created = addresseeService.saveNewAddressee(addressee);
+
+        return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
+    }
+
+    @RequestMapping(value = "/department", method = RequestMethod.POST)
+    public ResponseEntity addAddressee(@RequestBody Department department){
+        Department created = departmentService.saveNewDepartment(department);
+
+        return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
+    }
+
+    @RequestMapping(value = "/sender", method = RequestMethod.POST)
+    public ResponseEntity addSender(@RequestBody Sender sender){
+        Sender created = senderService.saveNewSender(sender);
+
+        return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
+    }
+
+
     @RequestMapping(value="/user", method = RequestMethod.PATCH)
     public void changePassword(@AuthenticationPrincipal UserDetailsImpl currentUser, @RequestBody String password){
         senderService.changePassword(currentUser, password);
@@ -85,11 +110,6 @@ public class RestApiController {
     private ResponseEntity createResponse(Object body) {
         return body == null ?  new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK) :
                 new ResponseEntity<>(body, HttpStatus.OK);
-    }
-
-    @GetMapping("/addressee/{id}/mails")
-    public List<Mail> getAddresseeMails(@PathVariable Long id){
-        return mailService.findByAddresseId(id);
     }
 
 }
