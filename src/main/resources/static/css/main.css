@@ -192,6 +192,10 @@ textarea {
     color: red;
 }
 
+#table-body .sending {
+    color: blue;
+}
+
 #table-body .canceled {
     color: gray;
 }
