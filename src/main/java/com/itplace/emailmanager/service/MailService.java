@@ -62,4 +62,8 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
     public List<Mail> findByAddresseId(Long id) {
         return repository.findByAddresseeId(id);
     }
+  
+    public List<Mail> findByAll(Long senderId, Integer page, Integer page_size, String sort, String direction) {
+        return repository.findBySenderId(senderId, createPageable(page, page_size, sort, direction));
+    }
 }

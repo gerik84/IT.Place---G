@@ -1,5 +1,17 @@
+let table = null;
 $().ready(function () {
     initDepartment();
+    updateMailList();
+
+    table = $('#table-mails').DataTable({
+        "pageLength": 6,
+        "bLengthChange": false,
+        "language": {
+            "url": "/js/Russian.json"
+        }
+    });
+
+
 });
 
 function initDepartment() {
@@ -9,14 +21,13 @@ function initDepartment() {
         .url('/api/departments')
         .preloader('#addressee-container')
         .send(function (msg) {
-            console.log(msg);
             // msg = JSON.parse(msg);
             let html = '';
             if (msg !== null && msg.length > 0) {
                 msg.forEach(function (it) {
                     html += '<li id="department_' + it.id + '">' +
                         '<div class="department-name d-flex align-items-end"  id="department-name-' + it.id + '">' +
-                        '<input type="checkbox" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
+                        '<input type="checkbox" id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
                         '<div class="list-department-item" onclick="toggleDepartment('+it.id+')" >' + it.name + '</div>' +
                         '</div>' +
                         '<ul class="department-child-list" id="child_' + it.id + '"></ul>' +
@@ -47,16 +58,15 @@ function toggleDepartment(id, callback = null) {
         .url('/api/department/' + id + '/addressees')
         .preloader('#addressee-container')
         .send(function (msg) {
-            console.log(msg);
             let html = '';
             if (msg !== null && msg.length > 0) {
                 msg.forEach(function (it) {
-                    html += ' <li class="addressee-list-item" onclick="getDetails(' + it.id + ', $(this))">' +
-                        '                                <input type="checkbox" value="' + it.id + '"  onclick="event.stopPropagation();"/>' +
-                        '                                <div class="d-flex flex-column">' +
-                        '                                    <div>' + it.name + '</div>' +
-                        '                                    <div class="font-small">' + it.email + '</div>' +
-                        '                                </div></li>';
+                    html += ' <li class="addressee-list-item">' +
+                        '<input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/>' +
+                        '<div class="d-flex flex-column">' +
+                        '<div>' + it.name + '</div>' +
+                        '<div class="font-small">' + it.email + '</div>' +
+                        '</div></li>';
                 });
                 html += '';
                 root.find('ul').empty();
@@ -73,21 +83,29 @@ function toggleDepartment(id, callback = null) {
     return false;
 }
 
-
-function getDetails(id, view) {
-    $('.addressee-list-item').removeClass('selected');
-    $('.auto-checked').prop('checked', false);
-    $('.auto-checked').removeClass('auto-checked');
-    $(view).addClass('selected');
-    $(view).find('input').addClass('auto-checked');
-    $(view).find('input').prop('checked', true);
-    updateMailList(id);
+function onClickCheckAddressee(parent_id, event) {
+    event.stopPropagation();
+    let all = $('#child_' + parent_id + ' li input');
+    let selected = $('#child_' + parent_id + ' li input:checked');
+    $('#select-all-' + parent_id).prop('checked', all.length === selected.length);
 }
 
-function updateMailList(id) {
+function getDetails(id, view) {
+    // $('.addressee-list-item').removeClass('selected');
+    // $('.auto-checked').prop('checked', false);
+    // $('.auto-checked').removeClass('auto-checked');
+    // $(view).addClass('selected');
+    // $(view).find('input').addClass('auto-checked');
+    // $(view).find('input').prop('checked', true);
+    // updateMailList(id);
+}
+
+
+function updateMailList() {
+
     new Http()
         .method("GET")
-        .url('/api/addressee/' + id + '/mails')
+        .url('/api/mails')
         .preloader('#mail-list-container')
         .send(function (msg, code) {
 
@@ -95,28 +113,52 @@ function updateMailList(id) {
             if (msg.length === 0) {
                 html += '<div class="text-center">Список рассылок пуст</div>'
             } else {
+
+                table.rows().remove();
+
                 msg.forEach(function (item) {
-                    html +=
-                        '<li class="d-flex card flex-row">' +
-                        '<div class="w-75">' +
-                        '   <div class="mail-list-subject">' + item.subject + '</div>' +
-                        '   <div class="mail-list-text small-font">' + item.message + '</div>' +
-                        '</div>' +
-                        '<div class="w-25 text-right d-flex flex-column justify-content-between ">' +
-                        '   <div class="mail-list-created">' + item.whenCreated + '</div>' +
-                        '   <div class="mail-list-status ' + item.status.toLowerCase() + '">' + item.status.toLowerCase() + '</div>' +
-                        '</div>' +
-                        '</li>';
+                    let a_name = [];
+                    let a_emai = [];
+
+                    item.addressee.forEach(function (addresses) {
+                        a_name.push(addresses.name);
+                        a_emai.push(addresses.email);
+                    });
+
+                    let created = new Date(0);
+                    created.setMilliseconds(item.whenCreated);
+                    let node = table.row.add([item.id, item.subject, a_name.join(', '), '<div>' + translateStatus(item.status) + '</div>', created.toLocaleDateString()])
+                        .draw()
+                        .node();
+                    $(node).addClass(item.status.toLowerCase());
+
                 });
             }
-            $('#mail-list').empty().append(html);
-            $('.mail-list-container').show();
         });
 }
 
-function selectAll(id, state) {
-    console.log(state);
+function translateStatus(status) {
+    let result = status;
+    switch (status.toUpperCase()) {
+        case 'NEW':
+            result = 'Новое';
+            break;
+        case 'SENT':
+            result = 'Отправлено';
+            break;
+        case 'FAILED':
+            result = 'Ошибка';
+            break;
+        case 'CANCELLED':
+            result = 'Отмененное';
+            break;
 
+    }
+    return result;
+
+}
+
+function selectAll(id, state) {
     $('#child_' + id + ' li input').prop('checked', state);
     //
     if (state && !$('#department-name-' + id).hasClass('open-tree')) {
@@ -129,8 +171,15 @@ function selectAll(id, state) {
 }
 
 function sendNow() {
+
     let check = $('.department-child-list li input:checked');
     let addressees = [];
+
+    if (check.length === 0) {
+        showAlert('Необходимо выбрать получателя', 'alert-danger');
+        return;
+    }
+
     check.each(function (key, item) {
         let a = new Addressee();
         a.id = $(item).val();
@@ -141,6 +190,11 @@ function sendNow() {
     let subject = $('#new-message-subject').val();
     let text = $('#new-message-text').val();
 
+    if (subject.length === 0 || text.length === 0) {
+        showAlert('Необходимо заполнить <b>Тему</b> и <b>Текст</b> письма', 'alert-danger');
+        return;
+    }
+
     let mailTask = new MailTask();
     mailTask.intervalTime = 0;
     mailTask.repeatsLeft = 0;
@@ -150,28 +204,60 @@ function sendNow() {
     mail.addressee = addressees;
     mail.subject = subject;
     mail.message = text;
-    mail.sender = {id: 100000001};
 
     let json = JSON.stringify(mail);
-    console.log(json);
     new Http()
         .body(json)
         .method("POST")
         .url('/api/mail')
-        .preloader('body')
+        .preloader('#create-message-container')
         .send(function (msg, code) {
             if (code !== 201) {
                 alert('Ой, что-то пошло не так, повторите попытку поже');
                 return;
             }
-            alert('Сообщение добавлено в очередь отправки');
+
+            showAlert('Сообщение добавлено в очередь отправки', 'alert-success');
             $('#new-message-subject').val('');
             $('#new-message-text').val('');
 
             if (mail.addressee.length === 1) {
                 updateMailList(mail.addressee[0].id);
             }
+            updateMailList()
         });
+}
+
+function createModal(title, text) {
+
+    $('#dynamic-modal .title').text(title);
+    $('#dynamic-modal .modal-body').empty().append(text);
+    $('#dynamic-modal').modal('show');
+}
+
+var timeoutInstan = null;
+
+function showAlert(text, style) {
+    if (timeoutInstan !== null)
+        clearTimeout(timeoutInstan);
+
+    $("#alert-dynamic")
+        .removeAttr('class')
+        .attr('class', '')
+        .addClass('alert')
+        .addClass(style)
+        .empty()
+        .append(text)
+        .show();
+
+    timeoutInstan = setTimeout(function () {
+        $('#alert-dynamic').hide()
+    }, 2000)
+
+}
+
+function hideAlert() {
+
 }
 
 class Http {
@@ -219,7 +305,6 @@ class Http {
             complete: function (msg, status) {
                 clearTimeout(timeoutInstant);
                 loading.remove();
-                console.log(msg);
                 let response = null;
                 if (msg.responseText != null && msg.responseText.length > 0) {
                     response = JSON.parse(msg.responseText);
