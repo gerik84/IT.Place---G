@@ -17,8 +17,6 @@ import java.util.List;
 @Component
 public class AddresseeImportExport {
 
-    // TODO все ниженаписанное требует проверки!
-
     public List<Addressee> importFromFile(String stringPath) {
         Path path = Paths.get(stringPath);
 
@@ -36,10 +34,10 @@ public class AddresseeImportExport {
         return new ArrayList<>();
     }
 
-    public boolean exportToFile(List<Addressee> addresseeList, String stringPath) {
+    public boolean exportToFile(List<Addressee> addresseeList, String stringPath) throws IOException {
         File outputFile = new File(stringPath);
 
-        if (outputFile.isFile() && outputFile.canWrite()) {
+        if (outputFile.createNewFile()) {
             try (Writer writer = new FileWriter(outputFile)) {
                 StatefulBeanToCsv statefulBeanToCsv = new StatefulBeanToCsvBuilder(writer)
                         .withSeparator(CSVWriter.DEFAULT_SEPARATOR).build();

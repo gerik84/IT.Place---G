@@ -35,6 +35,7 @@ public class EmailSenderService {
             mailMessage.setSubject(mail.getSubject());
             mailMessage.setText(mail.getMessage());
             emailSender.send(mailMessage);
+            mailService.changeStatus(mail, Mail.STATUS.SENT);
             // если задача не бесконечна
             if (currentTask.getRepeatsLeft() > 0) {
                 currentTask.setRepeatsLeft(currentTask.getRepeatsLeft() - 1);
@@ -48,14 +49,18 @@ public class EmailSenderService {
                 currentTask.setStartTime(currentTask.getStartTime() + currentTask.getIntervalTime());
                 currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
             }
-            mailService.changeStatus(mail, Mail.STATUS.SENT);
+
         } catch (MailException e) {
             // даем письму 5 попыток
             if (mail.getAttempts() < 5) {
                 mail.setAttempts(mail.getAttempts() + 1);
-                mailService.changeStatus(mail, Mail.STATUS.READY);
+                currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
+                mailService.changeStatus(mail, Mail.STATUS.ERROR);
             }
-            else mailService.changeStatus(mail, Mail.STATUS.FAILED);
+            else {
+                currentTask.setStatus(MailTask.STATUS.DONE);
+                mailService.changeStatus(mail, Mail.STATUS.FAILED);
+            }
         }
 
         mailTaskService.save(currentTask);
