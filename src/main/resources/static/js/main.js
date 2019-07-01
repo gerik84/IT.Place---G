@@ -16,7 +16,7 @@ function initDepartment() {
                 msg.forEach(function (it) {
                     html += '<li id="department_' + it.id + '">' +
                         '<div class="department-name d-flex align-items-end"  id="department-name-' + it.id + '">' +
-                        '<input type="checkbox" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
+                        '<input type="checkbox" id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
                         '<div class="list-department-item" onclick="toggleDepartment('+it.id+')" >' + it.name + '</div>' +
                         '</div>' +
                         '<ul class="department-child-list" id="child_' + it.id + '"></ul>' +
@@ -51,8 +51,8 @@ function toggleDepartment(id, callback = null) {
             let html = '';
             if (msg !== null && msg.length > 0) {
                 msg.forEach(function (it) {
-                    html += ' <li class="addressee-list-item" onclick="getDetails(' + it.id + ', $(this))">' +
-                        '                                <input type="checkbox" value="' + it.id + '"  onclick="event.stopPropagation();"/>' +
+                    html += ' <li class="addressee-list-item">' +
+                        '                                <input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/>' +
                         '                                <div class="d-flex flex-column">' +
                         '                                    <div>' + it.name + '</div>' +
                         '                                    <div class="font-small">' + it.email + '</div>' +
@@ -73,15 +73,21 @@ function toggleDepartment(id, callback = null) {
     return false;
 }
 
+function onClickCheckAddressee(parent_id, event) {
+    event.stopPropagation();
+    let all = $('#child_' + parent_id + ' li input');
+    let selected = $('#child_' + parent_id + ' li input:checked');
+    $('#select-all-' + parent_id).prop('checked', all.length === selected.length);
+}
 
 function getDetails(id, view) {
-    $('.addressee-list-item').removeClass('selected');
-    $('.auto-checked').prop('checked', false);
-    $('.auto-checked').removeClass('auto-checked');
-    $(view).addClass('selected');
-    $(view).find('input').addClass('auto-checked');
-    $(view).find('input').prop('checked', true);
-    updateMailList(id);
+    // $('.addressee-list-item').removeClass('selected');
+    // $('.auto-checked').prop('checked', false);
+    // $('.auto-checked').removeClass('auto-checked');
+    // $(view).addClass('selected');
+    // $(view).find('input').addClass('auto-checked');
+    // $(view).find('input').prop('checked', true);
+    // updateMailList(id);
 }
 
 function updateMailList(id) {
