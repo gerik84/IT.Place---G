@@ -101,7 +101,6 @@ public class RestApiController {
         return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
 
-
     @RequestMapping(value="/user", method = RequestMethod.PATCH)
     public void changePassword(@AuthenticationPrincipal UserDetailsImpl currentUser, @RequestBody String password){
         senderService.changePassword(currentUser, password);

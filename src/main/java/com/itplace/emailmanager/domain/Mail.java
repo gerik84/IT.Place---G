@@ -98,7 +98,6 @@ public class Mail extends BaseIdentifierEntity {
         ERROR,
         SENDING,
         SENT,
-        FAILED,
-        CANCELLED
+        FAILED
     }
 }

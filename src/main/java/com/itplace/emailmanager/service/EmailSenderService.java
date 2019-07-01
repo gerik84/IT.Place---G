@@ -3,17 +3,20 @@ package com.itplace.emailmanager.service;
 import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.domain.MailTask;
 import com.itplace.emailmanager.domain.Sender;
-import com.itplace.emailmanager.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.Session;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@Scope("prototype")
 public class EmailSenderService {
     @Autowired
     private JavaMailSenderImpl emailSender;
@@ -24,7 +27,7 @@ public class EmailSenderService {
 
     @Async
     public CompletableFuture<Mail> sendMail(String toEmail, Mail mail) throws InterruptedException {
-        mailService.changeStatus(mail, Mail.STATUS.SENDING);
+        mailService.changeStatus(mail, Mail.STATUS.SENDING, null);
 
         setMailSenderProps(mail.getSender());
         MailTask currentTask = mail.getMailTask();
@@ -35,7 +38,7 @@ public class EmailSenderService {
             mailMessage.setSubject(mail.getSubject());
             mailMessage.setText(mail.getMessage());
             emailSender.send(mailMessage);
-            mailService.changeStatus(mail, Mail.STATUS.SENT);
+            mailService.changeStatus(mail, Mail.STATUS.SENT, null);
             // если задача не бесконечна
             if (currentTask.getRepeatsLeft() > 0) {
                 currentTask.setRepeatsLeft(currentTask.getRepeatsLeft() - 1);
@@ -49,17 +52,16 @@ public class EmailSenderService {
                 currentTask.setStartTime(currentTask.getStartTime() + currentTask.getIntervalTime());
                 currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
             }
-
         } catch (MailException e) {
             // даем письму 5 попыток
             if (mail.getAttempts() < 5) {
                 mail.setAttempts(mail.getAttempts() + 1);
                 currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
-                mailService.changeStatus(mail, Mail.STATUS.ERROR);
+                mailService.changeStatus(mail, Mail.STATUS.ERROR, e.getMessage());
             }
             else {
-                currentTask.setStatus(MailTask.STATUS.DONE);
-                mailService.changeStatus(mail, Mail.STATUS.FAILED);
+                currentTask.setStatus(MailTask.STATUS.CANCELLED);
+                mailService.changeStatus(mail, Mail.STATUS.FAILED, e.getMessage());
             }
         }
 
@@ -67,7 +69,7 @@ public class EmailSenderService {
         return CompletableFuture.completedFuture(mailService.findById(mail.getId()));
     }
 
-    private void setMailSenderProps(Sender sender){
+    private void setMailSenderProps(Sender sender) {
         emailSender.setHost(sender.getSmtp());
         emailSender.setPort(sender.getPort());
         emailSender.setUsername(sender.getEmail());

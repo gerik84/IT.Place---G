@@ -5,6 +5,7 @@ import com.itplace.emailmanager.domain.MailLog;
 import com.itplace.emailmanager.domain.MailTask;
 import com.itplace.emailmanager.repositry.MailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +22,8 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
      * с незавершенной задачей и не стоящие в очереди на отправку
      */
     public List<Mail> findMailToSend() {
-        return repository.findByWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndStatusNot
-                (System.currentTimeMillis(), MailTask.STATUS.DONE, Mail.STATUS.SENDING);
+        return repository.findByWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndMailTask_StatusNotAndStatusNot
+                (System.currentTimeMillis(), MailTask.STATUS.DONE, MailTask.STATUS.CANCELLED, Mail.STATUS.SENDING);
     }
 
     public Mail saveNewMail(Mail mail){
@@ -41,9 +42,10 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         return repository.save(mail);
     }
 
-    public void changeStatus(Mail mail, Mail.STATUS status){
+    public void changeStatus(Mail mail, Mail.STATUS status, String message){
         MailLog mailLog = new MailLog();
         mailLog.setMailStatus(status);
+        mailLog.setMessage(message);
         mailLogService.save(mailLog);
         mail.getMailLog().add(mailLog);
 

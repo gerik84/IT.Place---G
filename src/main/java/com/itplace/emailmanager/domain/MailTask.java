@@ -78,6 +78,7 @@ public class MailTask extends BaseIdentifierEntity {
     public enum STATUS {
         NEW,
         IN_PROGRESS,
-        DONE
+        DONE,
+        CANCELLED
     }
 }
