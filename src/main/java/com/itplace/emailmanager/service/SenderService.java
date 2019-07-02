@@ -6,18 +6,27 @@ import com.itplace.emailmanager.repositry.RoleRepository;
 import com.itplace.emailmanager.repositry.SenderRepository;
 import com.itplace.emailmanager.security.PasswordEncoder;
 import com.itplace.emailmanager.security.UserDetails.UserDetailsImpl;
+import com.itplace.emailmanager.util.SmtpConnectionTester;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Service
 public class SenderService extends BaseRepository<SenderRepository, Sender> {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
+    @Autowired
+    private SmtpConnectionTester smtpConnectionTester;
 
     public Sender findByEmail(String email) {
         return repository.findByEmailIgnoreCase(email);
@@ -36,8 +45,9 @@ public class SenderService extends BaseRepository<SenderRepository, Sender> {
         sender.setPassword(passwordEncoder.encode(password));
     }
 
-    public Sender saveNewSender(Sender sender){
-        if (repository.existsByEmailEqualsIgnoreCase(sender.getEmail())) return repository.save(sender);
-        else return null;
+    // TODO
+    public Sender resetConnectionStatus(Sender sender){
+        Sender checkedSender = smtpConnectionTester.checkConnectionStatus(sender).join();
+        return repository.save(checkedSender);
     }
 }

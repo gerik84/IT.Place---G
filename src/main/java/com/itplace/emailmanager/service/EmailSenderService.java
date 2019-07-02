@@ -3,56 +3,75 @@ package com.itplace.emailmanager.service;
 import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.domain.MailTask;
 import com.itplace.emailmanager.domain.Sender;
+import com.itplace.emailmanager.util.SmtpConnectionTester;
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.SimpleEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
+import java.time.YearMonth;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-@Scope("prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class EmailSenderService {
     @Autowired
-    private JavaMailSenderImpl emailSender;
+    private SmtpConnectionTester smtpConnectionTester;
     @Autowired
     private MailService mailService;
     @Autowired
     private MailTaskService mailTaskService;
+    @Autowired
+    private SenderService senderService;
 
     @Async
     public CompletableFuture<Mail> sendMail(String toEmail, Mail mail) throws InterruptedException {
-        mailService.changeStatus(mail, Mail.STATUS.SENDING, null);
+        mailService.changeStatus(mail, Mail.STATUS.SENDING);
 
-        setMailSenderProps(mail.getSender());
         MailTask currentTask = mail.getMailTask();
         try {
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(toEmail);
-            mailMessage.setFrom(mail.getSender().getEmail());
-            mailMessage.setSubject(mail.getSubject());
-            mailMessage.setText(mail.getMessage());
-            emailSender.send(mailMessage);
-            mailService.changeStatus(mail, Mail.STATUS.SENT, null);
-            // если задача не бесконечна
-            if (currentTask.getRepeatsLeft() > 0) {
-                currentTask.setRepeatsLeft(currentTask.getRepeatsLeft() - 1);
-                currentTask.setStartTime(currentTask.getStartTime() + currentTask.getIntervalTime());
-                currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
+            Email email = new SimpleEmail();
+            email.setHostName(mail.getSender().getSmtp());
+            email.setSmtpPort(mail.getSender().getPort());
+            email.setAuthenticator(new DefaultAuthenticator(mail.getSender().getEmail(), mail.getSender().getEmailPassword()));
+            email.setSSLOnConnect(true);
+            email.setFrom(mail.getSender().getEmail());
+            email.setSubject(mail.getSubject());
+            email.setMsg(mail.getMessage());
+            email.addTo(toEmail);
+            email.send();
+            mailService.changeStatus(mail, Mail.STATUS.SENT);
+            switch (currentTask.getPeriod()){
+                case ONCE:
+                    currentTask.setStatus(MailTask.STATUS.DONE);
+                    break;
+                case DAILY: {
+                    currentTask.setStartTime(currentTask.getStartTime() + getPeriodLong(MailTask.PERIOD.DAILY));
+                    currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
+                    break;
+                }
+                case WEEKLY: {
+                    currentTask.setStartTime(currentTask.getStartTime() + getPeriodLong(MailTask.PERIOD.WEEKLY));
+                    currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
+                    break;
+                }
+                case MONTHLY: {
+                    currentTask.setStartTime(currentTask.getStartTime() + getPeriodLong(MailTask.PERIOD.MONTHLY));
+                    currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
+                    break;
+                }
+                case YEARLY: {
+                    currentTask.setStartTime(currentTask.getStartTime() + getPeriodLong(MailTask.PERIOD.YEARLY));
+                    currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
+                    break;
+                }
             }
-            // если задача закончилась
-            if (currentTask.getRepeatsLeft() == 0) currentTask.setStatus(MailTask.STATUS.DONE);
-            // если задача бесконечна
-            if (currentTask.getRepeatsLeft() == -1) {
-                currentTask.setStartTime(currentTask.getStartTime() + currentTask.getIntervalTime());
-                currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
-            }
-        } catch (MailException e) {
+        } catch (EmailException e) {
             // даем письму 5 попыток
             if (mail.getAttempts() < 5) {
                 mail.setAttempts(mail.getAttempts() + 1);
@@ -60,19 +79,26 @@ public class EmailSenderService {
                 mailService.changeStatus(mail, Mail.STATUS.ERROR, e.getMessage());
             }
             else {
+                Sender currentSender = mail.getSender();
+                currentSender.setConnectionOk(false);
+                senderService.save(currentSender);
                 currentTask.setStatus(MailTask.STATUS.CANCELLED);
                 mailService.changeStatus(mail, Mail.STATUS.FAILED, e.getMessage());
             }
         }
 
         mailTaskService.save(currentTask);
-        return CompletableFuture.completedFuture(mailService.findById(mail.getId()));
+        return CompletableFuture.completedFuture(mail);
     }
 
-    private void setMailSenderProps(Sender sender) {
-        emailSender.setHost(sender.getSmtp());
-        emailSender.setPort(sender.getPort());
-        emailSender.setUsername(sender.getEmail());
-        emailSender.setPassword(sender.getEmailPassword());
+    private long getPeriodLong(MailTask.PERIOD period) {
+        long day = 24 * 60 * 60 * 1000;
+        switch (period) {
+            case DAILY: return day;
+            case WEEKLY: return 7 * day;
+            case MONTHLY: return YearMonth.now().lengthOfMonth() * day;
+            case YEARLY: return YearMonth.now().lengthOfYear() * day;
+        }
+        return 0;
     }
 }

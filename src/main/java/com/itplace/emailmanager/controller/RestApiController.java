@@ -96,7 +96,7 @@ public class RestApiController {
 
     @RequestMapping(value = "/sender", method = RequestMethod.POST)
     public ResponseEntity addSender(@RequestBody Sender sender){
-        Sender created = senderService.saveNewSender(sender);
+        Sender created = senderService.save(sender);
 
         return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
