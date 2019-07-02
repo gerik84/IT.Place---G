@@ -3,7 +3,6 @@ package com.itplace.emailmanager.service;
 import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.domain.MailTask;
 import com.itplace.emailmanager.domain.Sender;
-import com.itplace.emailmanager.util.SmtpConnectionTester;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -80,7 +79,7 @@ public class EmailSenderService {
                 Sender currentSender = mail.getSender();
                 currentSender.setConnectionOk(false);
                 senderService.save(currentSender);
-                currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
+                currentTask.setStatus(MailTask.STATUS.PAUSED);
                 mailService.changeStatus(mail, Mail.STATUS.FAILED, e.getMessage());
             }
         }

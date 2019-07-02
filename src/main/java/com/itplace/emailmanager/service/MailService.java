@@ -22,7 +22,7 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
      */
     public List<Mail> findMailToSend() {
         return repository.findBySenderConnectionOkTrueAndWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndMailTask_StatusNotAndStatusNot
-                (System.currentTimeMillis(), MailTask.STATUS.DONE, MailTask.STATUS.CANCELLED, Mail.STATUS.SENDING);
+                (System.currentTimeMillis(), MailTask.STATUS.DONE, MailTask.STATUS.PAUSED, Mail.STATUS.SENDING);
     }
 
     @Override
