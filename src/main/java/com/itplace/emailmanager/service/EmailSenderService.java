@@ -21,8 +21,6 @@ import java.util.concurrent.CompletableFuture;
 @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class EmailSenderService {
     @Autowired
-    private SmtpConnectionTester smtpConnectionTester;
-    @Autowired
     private MailService mailService;
     @Autowired
     private MailTaskService mailTaskService;
@@ -82,11 +80,10 @@ public class EmailSenderService {
                 Sender currentSender = mail.getSender();
                 currentSender.setConnectionOk(false);
                 senderService.save(currentSender);
-                currentTask.setStatus(MailTask.STATUS.CANCELLED);
+                currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
                 mailService.changeStatus(mail, Mail.STATUS.FAILED, e.getMessage());
             }
         }
-
         mailTaskService.save(currentTask);
         return CompletableFuture.completedFuture(mail);
     }

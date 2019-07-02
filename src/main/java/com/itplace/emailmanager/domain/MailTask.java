@@ -5,15 +5,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToOne;
 
-/**
- * Сущность планировщика для письма.
- * Варианты инициализации:
- *  startTime = время выполнения, intervalTime = 0, repeatsLeft = 1 -- одноразовое письмо;
- *  startTime = время выполнения, intervalTime = интервал, repeatsLeft = N -- письмо отправится N раз;
- *  startTime = время выполнения, intervalTime = интервал, repeatsLeft = -1 -- письмо будет отправляться через интервал N бесконечно (для приостановки - STATUS.DONE)
- *  Если планировщик = null при создании письма, используется первый вариант.
- */
-
 @Entity
 public class MailTask extends BaseIdentifierEntity {
     private Long startTime;
@@ -29,7 +20,6 @@ public class MailTask extends BaseIdentifierEntity {
     }
 
     /**
-     *
      * @param startTime время первого выполнения в мс
      */
     public void setStartTime(Long startTime) {

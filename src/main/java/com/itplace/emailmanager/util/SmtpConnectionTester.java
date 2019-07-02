@@ -1,13 +1,13 @@
 package com.itplace.emailmanager.util;
 
 import com.itplace.emailmanager.domain.Sender;
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.SimpleEmail;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -20,18 +20,21 @@ public class SmtpConnectionTester {
         return CompletableFuture.completedFuture(sender);
     }
 
-    // TODO
+    // пока ничего лучше не придумал
     private boolean isConnectionOk(Sender sender) {
         try {
-            Properties properties = new Properties();
-            properties.put("mail.smtp.starttls.enable", "true");
-            properties.put("mail.smtp.auth", "true");
-            Session session = Session.getInstance(properties, null);
-            Transport transport = session.getTransport("smtp");
-            transport.connect(sender.getSmtp(), sender.getPort(), sender.getEmail(), sender.getEmailPassword());
-            transport.close();
+            Email email = new SimpleEmail();
+            email.setHostName(sender.getSmtp());
+            email.setSmtpPort(sender.getPort());
+            email.setAuthenticator(new DefaultAuthenticator(sender.getEmail(), sender.getEmailPassword()));
+            email.setSSLOnConnect(true);
+            email.setFrom(sender.getEmail());
+            email.setSubject("Подтверждение подключения к SMTP серверу.");
+            email.setMsg("Проверяем подключение к почтовому серверу.\nДанное письмо отправлено автоматически.");
+            email.addTo(sender.getEmail());
+            email.send();
             return true;
-        } catch (MessagingException e) {
+        } catch (EmailException e) {
             return false;
         }
     }

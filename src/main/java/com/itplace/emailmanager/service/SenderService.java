@@ -45,9 +45,13 @@ public class SenderService extends BaseRepository<SenderRepository, Sender> {
         sender.setPassword(passwordEncoder.encode(password));
     }
 
-    // TODO
-    public Sender resetConnectionStatus(Sender sender){
+    public Sender checkConnectionStatus(Sender sender){
         Sender checkedSender = smtpConnectionTester.checkConnectionStatus(sender).join();
         return repository.save(checkedSender);
+    }
+
+    public Sender createNewSender(Sender sender) {
+        if (!repository.existsByEmailEqualsIgnoreCase(sender.getEmail())) return repository.save(checkConnectionStatus(sender));
+        else return null;
     }
 }

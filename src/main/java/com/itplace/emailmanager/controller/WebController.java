@@ -3,8 +3,6 @@ package com.itplace.emailmanager.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.time.YearMonth;
-
 @Controller
 public class WebController {
     @GetMapping("/")

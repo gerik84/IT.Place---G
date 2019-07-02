@@ -42,7 +42,7 @@ public class AddresseeService extends BaseRepository<AddresseeRepository, Addres
         return repository.existsByEmailEqualsIgnoreCase(email);
     }
 
-    public Addressee saveNewAddressee(Addressee addressee) {
+    public Addressee createNewAddressee(Addressee addressee) {
         if (!repository.existsByEmailEqualsIgnoreCase(addressee.getEmail())) return repository.save(addressee);
         else return null;
     }
