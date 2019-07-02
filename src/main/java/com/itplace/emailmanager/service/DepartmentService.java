@@ -11,4 +11,8 @@ public class DepartmentService extends BaseRepository<DepartmentRepository, Depa
         if (!repository.existsByNameEqualsIgnoreCase(department.getName())) return repository.save(department);
         else return null;
     }
+
+    public Department findByNameEquals(String s) {
+        return repository.findByNameEquals(s);
+    }
 }

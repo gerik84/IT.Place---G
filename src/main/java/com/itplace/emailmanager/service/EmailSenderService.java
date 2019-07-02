@@ -2,8 +2,6 @@ package com.itplace.emailmanager.service;
 
 import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.domain.MailTask;
-import com.itplace.emailmanager.domain.Sender;
-import com.itplace.emailmanager.util.SmtpConnectionTester;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -24,8 +22,6 @@ public class EmailSenderService {
     private MailService mailService;
     @Autowired
     private MailTaskService mailTaskService;
-    @Autowired
-    private SenderService senderService;
 
     @Async
     public CompletableFuture<Mail> sendMail(String toEmail, Mail mail) throws InterruptedException {
@@ -70,19 +66,7 @@ public class EmailSenderService {
                 }
             }
         } catch (EmailException e) {
-            // даем письму 5 попыток
-            if (mail.getAttempts() < 5) {
-                mail.setAttempts(mail.getAttempts() + 1);
-                currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
-                mailService.changeStatus(mail, Mail.STATUS.ERROR, e.getMessage());
-            }
-            else {
-                Sender currentSender = mail.getSender();
-                currentSender.setConnectionOk(false);
-                senderService.save(currentSender);
-                currentTask.setStatus(MailTask.STATUS.IN_PROGRESS);
-                mailService.changeStatus(mail, Mail.STATUS.FAILED, e.getMessage());
-            }
+            mailService.changeStatus(mail, Mail.STATUS.FAILED, e.getMessage());
         }
         mailTaskService.save(currentTask);
         return CompletableFuture.completedFuture(mail);

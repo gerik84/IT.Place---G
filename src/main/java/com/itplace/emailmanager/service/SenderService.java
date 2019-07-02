@@ -45,13 +45,9 @@ public class SenderService extends BaseRepository<SenderRepository, Sender> {
         sender.setPassword(passwordEncoder.encode(password));
     }
 
-    public Sender checkConnectionStatus(Sender sender){
-        Sender checkedSender = smtpConnectionTester.checkConnectionStatus(sender).join();
-        return repository.save(checkedSender);
-    }
-
-    public Sender createNewSender(Sender sender) {
-        if (!repository.existsByEmailEqualsIgnoreCase(sender.getEmail())) return repository.save(checkConnectionStatus(sender));
-        else return null;
+    @Override
+    public Sender save(Sender model) {
+        if (!repository.existsByEmailEqualsIgnoreCase(model.getEmail()) && smtpConnectionTester.isConnectionOk(model)) return repository.save(model);
+        return null;
     }
 }

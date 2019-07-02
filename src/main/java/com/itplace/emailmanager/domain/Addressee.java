@@ -1,5 +1,7 @@
 package com.itplace.emailmanager.domain;
 
+import com.opencsv.bean.CsvBindAndJoinByName;
+import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvBindByPosition;
 
 import javax.persistence.Entity;

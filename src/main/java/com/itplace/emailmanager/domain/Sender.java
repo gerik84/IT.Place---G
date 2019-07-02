@@ -10,7 +10,6 @@ public class Sender extends BaseIdentifierEntity {
     private String emailPassword;
     private Integer port;
     private String smtp;
-    private boolean connectionOk;
     @ManyToOne
     private Role role;
 
@@ -60,13 +59,5 @@ public class Sender extends BaseIdentifierEntity {
 
     public void setPassword(String password) {
         this.password = (password);
-    }
-
-    public boolean isConnectionOk() {
-        return connectionOk;
-    }
-
-    public void setConnectionOk(boolean connectionOk) {
-        this.connectionOk = connectionOk;
     }
 }

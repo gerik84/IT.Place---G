@@ -92,7 +92,7 @@ function getDetails(id) {
             html += '<div class="w-75">' +
                 '   <div><span>Создано:&nbsp;</span><span id="mail-mail-created">' + created.toLocaleDateString() + '</span></div>' +
                 '   <div class="d-flex align-items-center">' +
-                '   <div>Статус:&nbsp;<span>'+msg.mailTask.status+'</span></div>' +
+                '   <div>Статус:&nbsp;<span>' + translateStatus(msg.mailTask.status) + '</span></div>' +
                 '</div>' +
                 '<div>Текст сообщения:</div>' +
                 '   <div id="modal-mail-message">' + msg.message + '</div>' +
@@ -101,7 +101,7 @@ function getDetails(id) {
 
             let footer = '';
             footer += '  <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>' ;
-            footer += '<button type="button" class="btn btn-primary" onclick="changeStatus( ' + msg.id + ', \'' + (msg.mailTask.status === 'IN_PROGRESS' ? 'PAUSED' : 'IN_PROGRESS') + '\')">Приостановить</button>';
+            footer += '<button type="button" class="btn btn-primary" onclick="changeStatus( ' + msg.id + ', \'' + (msg.mailTask.status === 'IN_PROGRESS' ? 'PAUSED' : 'IN_PROGRESS') + '\')">' + (msg.mailTask.status === 'IN_PROGRESS' ? 'Приостановить' : 'Возобновить') + '</button>';
 
 
             createModal(msg.subject, html, footer);
@@ -250,16 +250,16 @@ function translateStatus(status) {
     let result = status;
     switch (status.toUpperCase()) {
         case 'NEW':
-            result = 'Новое';
+            result = 'Новая задача';
             break;
         case 'IN_PROGRESS':
-            result = 'В очереди';
+            result = 'Выполняется';
+            break;
+        case 'PAUSED':
+            result = 'приостановлена';
             break;
         case 'DONE':
-            result = 'Отправлено';
-            break;
-        case 'FAILED':
-            result = 'Ошибка';
+            result = 'выполнено';
             break;
         case 'CANCELLED':
             result = 'Отмененное';

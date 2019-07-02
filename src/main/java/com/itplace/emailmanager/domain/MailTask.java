@@ -47,7 +47,7 @@ public class MailTask extends BaseIdentifierEntity {
     }
 
     /**
-     * @param status NEW - новая задача; IN_PROGRESS - выполняется; DONE - выполнена; CANCELLED - отменена
+     * @param status NEW - новая задача; IN_PROGRESS - выполняется; DONE - выполнена; PAUSED - приостановлена
      *
      */
     public void setStatus(STATUS status) {
@@ -57,8 +57,8 @@ public class MailTask extends BaseIdentifierEntity {
     public enum STATUS {
         NEW,
         IN_PROGRESS,
-        DONE,
-        CANCELLED
+        PAUSED,
+        DONE
     }
 
     public enum PERIOD {
