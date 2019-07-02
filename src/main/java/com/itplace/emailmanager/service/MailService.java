@@ -21,7 +21,7 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
      * с незавершенной задачей и не стоящие в очереди на отправку
      */
     public List<Mail> findMailToSend() {
-        return repository.findBySenderConnectionOkTrueAndWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndMailTask_StatusNotAndStatusNot
+        return repository.findByWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndMailTask_StatusNotAndStatusNot
                 (System.currentTimeMillis(), MailTask.STATUS.DONE, MailTask.STATUS.PAUSED, Mail.STATUS.SENDING);
     }
 

@@ -45,11 +45,9 @@ public class Mail extends BaseIdentifierEntity {
     }
 
     /**
-     * @param status NEW - новое; ERROR - ошибка отправки, дается 5 попыток; SENDING - в очереди,
-     *               SENT - отправлено; FAILED - отправка не удалась после 5 попыток, письмо больше не отправляется
+     * @param status NEW - новое; SENDING - в очереди, SENT - отправлено; FAILED - отправка не удалась
      */
     public void setStatus(STATUS status) {
-        if (status == STATUS.NEW) attempts = 0;
         this.status = status;
     }
 
@@ -99,7 +97,6 @@ public class Mail extends BaseIdentifierEntity {
 
     public enum STATUS {
         NEW,
-        ERROR,
         SENDING,
         SENT,
         FAILED
