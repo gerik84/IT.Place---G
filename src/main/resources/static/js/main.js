@@ -358,8 +358,10 @@ function sendNow() {
 }
 
 function resetForm() {
-    $('#schedule-date').val('');
-    $('#schedule-period').val('');
+    $('#schedule-period').val('ONCE');
+    let datapicker = $('.datepicker');
+    datapicker.datepicker('setDate', new Date());
+
     $('#new-message-subject').val('');
     $('#new-message-text').val('');
 }
@@ -409,15 +411,12 @@ function toggleSchedule(isShow) {
         $('.schedule-container').animate({width: '100%', height: '100%', top: '-40px'}, 200, function () {
             $('#schedule-btn-create').show();
             $('.schedule-container .datepicker').datepicker('show');
-
         });
 
     } else {
         $('.schedule-container .datepicker').datepicker('hide');
         $('.schedule-container').animate({width: 0, height: 0, top: '100%'}, 200, function () {
             $('#schedule-btn-toggle').show();
-
-
         });
 
     }
