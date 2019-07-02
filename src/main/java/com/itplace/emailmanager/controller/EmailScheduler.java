@@ -29,8 +29,9 @@ public class EmailScheduler {
             mail.getAddressee().forEach(addressee -> {
                 try {
                     completableFutures.add(emailService.sendMail(addressee.getEmail(), mail));
-                } catch (InterruptedException e) { // TODO сделать что-нибудь при возникновении исключения
-                }
+                } catch (InterruptedException e) {
+                    mailService.changeStatus(mail, Mail.STATUS.ERROR, e.getMessage());
+            }
             });
         });
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
@@ -39,7 +40,7 @@ public class EmailScheduler {
     @Bean
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(mailService.findMailToSend().size());
+        executor.setCorePoolSize(mailService.findMailToSend().size()*10);
         executor.setMaxPoolSize(100);
         executor.setQueueCapacity(1000);
         executor.setThreadNamePrefix("emailSenderThread-");

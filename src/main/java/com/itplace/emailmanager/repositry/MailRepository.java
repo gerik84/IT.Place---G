@@ -20,6 +20,6 @@ public interface MailRepository extends LongJpaRepository<Mail> {
 
     List<Mail> findBySenderId(Long senderId, Pageable pageable);
   
-    List<Mail> findByWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndStatusNot
-            (Long currentTime, MailTask.STATUS taskStatusDone, Mail.STATUS mailStatusSending);
+    List<Mail> findBySenderConnectionOkTrueAndWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndMailTask_StatusNotAndStatusNot
+            (Long currentTime, MailTask.STATUS taskStatusDone, MailTask.STATUS taskStatusCancelled, Mail.STATUS mailStatusSending);
 }

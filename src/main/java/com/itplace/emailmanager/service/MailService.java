@@ -21,17 +21,20 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
      * с незавершенной задачей и не стоящие в очереди на отправку
      */
     public List<Mail> findMailToSend() {
-        return repository.findByWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndStatusNot
-                (System.currentTimeMillis(), MailTask.STATUS.DONE, Mail.STATUS.SENDING);
+        return repository.findBySenderConnectionOkTrueAndWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndMailTask_StatusNotAndStatusNot
+                (System.currentTimeMillis(), MailTask.STATUS.DONE, MailTask.STATUS.CANCELLED, Mail.STATUS.SENDING);
     }
 
-    public Mail saveNewMail(Mail mail){
+    @Override
+    public Mail save(Mail model) {
+        return createNewMail(model);
+    }
+
+    public Mail createNewMail(Mail mail){
         MailTask mailTask;
         if (mail.getMailTask() == null) {
             mailTask = new MailTask();
             mailTask.setStartTime(System.currentTimeMillis());
-            mailTask.setRepeatsLeft(1);
-            mailTask.setIntervalTime(0);
             mailTaskService.save(mailTask);
         }
         else mailTaskService.save(mail.getMailTask());
@@ -44,6 +47,17 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
     public void changeStatus(Mail mail, Mail.STATUS status){
         MailLog mailLog = new MailLog();
         mailLog.setMailStatus(status);
+        mailLogService.save(mailLog);
+        mail.getMailLog().add(mailLog);
+
+        mail.setStatus(status);
+        repository.save(mail);
+    }
+
+    public void changeStatus(Mail mail, Mail.STATUS status, String message){
+        MailLog mailLog = new MailLog();
+        mailLog.setMailStatus(status);
+        mailLog.setMessage(message.length() > 255 ? message.substring(0, 255) : message);
         mailLogService.save(mailLog);
         mail.getMailLog().add(mailLog);
 
@@ -65,10 +79,5 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
   
     public List<Mail> findByAll(Long senderId, Integer page, Integer page_size, String sort, String direction) {
         return repository.findBySenderId(senderId, createPageable(page, page_size, sort, direction));
-    }
-
-    @Override
-    public Mail save(Mail model) {
-        return saveNewMail(model);
     }
 }

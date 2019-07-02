@@ -75,32 +75,31 @@ public class RestApiController {
     public ResponseEntity saveMail(@RequestBody Mail mail){
         mail.setSender(senderService.findByEmail
                 (SecurityContextHolder.getContext().getAuthentication().getName()));
-        Mail created = mailService.saveNewMail(mail);
+        Mail created = mailService.createNewMail(mail);
 
         return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "/addressee", method = RequestMethod.POST)
     public ResponseEntity addAddressee(@RequestBody Addressee addressee){
-        Addressee created = addresseeService.saveNewAddressee(addressee);
+        Addressee created = addresseeService.createNewAddressee(addressee);
 
         return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "/department", method = RequestMethod.POST)
     public ResponseEntity addAddressee(@RequestBody Department department){
-        Department created = departmentService.saveNewDepartment(department);
+        Department created = departmentService.createNewDepartment(department);
 
         return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
 
     @RequestMapping(value = "/sender", method = RequestMethod.POST)
     public ResponseEntity addSender(@RequestBody Sender sender){
-        Sender created = senderService.saveNewSender(sender);
+        Sender created = senderService.save(sender);
 
         return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
-
 
     @RequestMapping(value="/user", method = RequestMethod.PATCH)
     public void changePassword(@AuthenticationPrincipal UserDetailsImpl currentUser, @RequestBody String password){

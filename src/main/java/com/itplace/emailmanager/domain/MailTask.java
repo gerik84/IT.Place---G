@@ -5,20 +5,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToOne;
 
-/**
- * Сущность планировщика для письма.
- * Варианты инициализации:
- *  startTime = время выполнения, intervalTime = 0, repeatsLeft = 1 -- одноразовое письмо;
- *  startTime = время выполнения, intervalTime = интервал, repeatsLeft = N -- письмо отправится N раз;
- *  startTime = время выполнения, intervalTime = интервал, repeatsLeft = -1 -- письмо будет отправляться через интервал N бесконечно (для приостановки - STATUS.DONE)
- *  Если планировщик = null при создании письма, используется первый вариант.
- */
-
 @Entity
 public class MailTask extends BaseIdentifierEntity {
     private Long startTime;
-    private Long intervalTime;
-    private Integer repeatsLeft;
+    @Enumerated(EnumType.STRING)
+    private PERIOD period = PERIOD.ONCE;
     @OneToOne
     private Mail mail;
     @Enumerated(EnumType.STRING)
@@ -29,34 +20,18 @@ public class MailTask extends BaseIdentifierEntity {
     }
 
     /**
-     *
      * @param startTime время первого выполнения в мс
      */
-    public void setStartTime(long startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 
-    public long getIntervalTime() {
-        return intervalTime;
+    public PERIOD getPeriod() {
+        return period;
     }
 
-    /**
-     *
-     * @param intervalTime интервал между выполнениями в мс
-     */
-    public void setIntervalTime(long intervalTime) {
-        this.intervalTime = intervalTime;
-    }
-
-    public Integer getRepeatsLeft() {
-        return repeatsLeft;
-    }
-
-    /**
-     * @param repeatsLeft используем -1 для создания бесконечной задачи
-     */
-    public void setRepeatsLeft(Integer repeatsLeft) {
-        this.repeatsLeft = repeatsLeft;
+    public void setPeriod(PERIOD period) {
+        this.period = period;
     }
 
     public Mail getMail() {
@@ -71,6 +46,10 @@ public class MailTask extends BaseIdentifierEntity {
         return status;
     }
 
+    /**
+     * @param status NEW - новая задача; IN_PROGRESS - выполняется; DONE - выполнена; CANCELLED - отменена
+     *
+     */
     public void setStatus(STATUS status) {
         this.status = status;
     }
@@ -78,6 +57,15 @@ public class MailTask extends BaseIdentifierEntity {
     public enum STATUS {
         NEW,
         IN_PROGRESS,
-        DONE
+        DONE,
+        CANCELLED
+    }
+
+    public enum PERIOD {
+        ONCE,
+        DAILY,
+        WEEKLY,
+        MONTHLY,
+        YEARLY
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DepartmentService extends BaseRepository<DepartmentRepository, Department> {
 
-    public Department saveNewDepartment(Department department) {
+    public Department createNewDepartment(Department department) {
         if (!repository.existsByNameEqualsIgnoreCase(department.getName())) return repository.save(department);
         else return null;
     }
