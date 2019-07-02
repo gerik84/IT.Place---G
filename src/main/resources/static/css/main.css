@@ -1,5 +1,7 @@
 body, html {
     font-family: sans-serif;
+    min-width: 860px;
+
 }
 
 h2 {
@@ -221,4 +223,86 @@ textarea {
     justify-content: center;
     width: 100%;
 
+}
+
+.main-container {
+    height: 90vh;
+    padding: 40px 0 0 0;
+}
+
+#schedule-btn-toggle {
+    flex-grow: 1;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.schedule-container {
+    position: absolute;
+    background: transparent;
+    z-index: 9;
+    display: flex;
+    flex-direction: column;
+    width: 0;
+    height: 0;
+    top: 100%;
+    left: 0;
+    overflow: hidden;
+}
+
+.schedule-content {
+    background: white;
+}
+
+
+.close {
+    cursor: default;
+}
+
+.schedule-icon {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background: url("../images/timetable.svg") no-repeat center;
+    background-size: 100%;
+}
+
+.schedule-icon:hover {
+    background: url("../images/timetable_on.svg") no-repeat center;
+    background-size: 100%;
+}
+
+.schedule-info {
+    margin-left: 10px;
+    color: green;
+}
+
+@media only screen and (max-width: 1024px) {
+
+    .container {
+        max-width: 100%;
+    }
+
+    .main-container {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+}
+
+#modal-addressee-list {
+    margin-top: 20px;
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+#modal-addressee-list > div {
+    margin-bottom: 10px;
+}
+
+#modal-mail-message {
+    overflow-y: auto;
+    max-height: 500px;
 }

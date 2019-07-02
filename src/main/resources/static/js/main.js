@@ -1,9 +1,12 @@
 let table = null;
+
+
 $().ready(function () {
     initDepartment();
     updateMailList();
 
-    table = $('#table-mails').DataTable({
+    let tblView = $('#table-mails');
+    table = tblView.DataTable({
         "pageLength": 6,
         "bLengthChange": false,
         "language": {
@@ -11,8 +14,123 @@ $().ready(function () {
         }
     });
 
+    tblView.children('tbody').on('click', 'tr', function () {
+        console.log(this);
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        } else {
+            table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            getDetails($(this).attr('id').split('_')[1]);
+
+
+        }
+    });
+
+    let datapicker = $('.datepicker');
+    datapicker.datepicker({
+        setDate: new Date(),
+        language: 'ru-RU',
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        autoclose: false,
+        changeMonth: true,
+        changeYear: true,
+        startDate: "today",
+        orientation: 'bottom'
+    });
+
+    datapicker.datepicker('setDate', new Date());
+
+    let dateSelectView = $('#schedule-date');
+    let dateInfoView = $('.schedule-info .date');
+    let periodSelectView = $('#schedule-period');
+    let periodInfoView = $('.schedule-info .period');
+
+    dateSelectView.change(function () {
+        dateInfoView.text($(this).val());
+    });
+    dateInfoView.text(dateSelectView.val());
+
+    periodSelectView.change(function () {
+        let text = $(this).children("option:selected").text();
+        periodInfoView.text(text);
+    });
+    periodInfoView.text(periodSelectView.children("option:selected").text());
 
 });
+
+function getDetails(id) {
+
+    // createModal('Детали рассылки', 'asdsa d');
+    new Http()
+        .preloader('#table-mails')
+        .method('GET')
+        .url('/api/mail/' + id)
+        .send(function (msg, status) {
+
+            let html = '';
+
+            html += ' <div class="d-flex">' +
+                '<div class="w-25">' +
+                ' <div>Получатели:</div>' +
+                '<div id="modal-addressee-list">';
+
+            msg.addressee.forEach(function (address) {
+
+                html += '<div>' +
+                    '   <div>' + address.name + '</div>' +
+                    '   <div class="font-small">' + address.email + '</div>' +
+                    '</div>'
+            });
+            html += '</div>';
+            html += '</div>';
+            html += '<div class="w-75">' +
+                '   <div><span>Создано:&nbsp;</span><span id="mail-mail-created">' + msg.whenCreated + '</span></div>' +
+                '   <div class="d-flex align-items-center">' +
+                '       <div>Статус:&nbsp;</div>' +
+                '       <select class="form-control" id="mail-mail-status">' +
+                '           <option value="NEW">Новое</option>' +
+                '           <option value="CANCELLED">Отменить</option>' +
+                '           <option>Отправлено</option>' +
+                '       </select>' +
+                '</div>' +
+                '<div>Текст сообщения:</div>' +
+                '   <div id="modal-mail-message">' + msg.message + '</div>' +
+                '</div>';
+
+
+            html += '</div>';
+
+            let footer = '  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
+                '<button type="button" class="btn btn-primary" onclick="editMail( ' + msg.id + ')">Сохранить</button>';
+            createModal(msg.subject, html, footer);
+        });
+
+
+}
+
+function editMail(id) {
+    let status = $('#mail-mail-status').children('option:selected').val();
+    let mail = new Mail();
+    mail.id = id;
+    mail.status = status;
+    let json = JSON.stringify(mail);
+    new Http()
+        .preloader('body')
+        .method('PATCH')
+        .body(json)
+        .url('/api/mail/' + id)
+        .send(function (msg, statusCode) {
+            if (statusCode === 202) {
+                showAlert('Статус рассылки успешно изменен', 'alert-success');
+                destroyModal();
+                updateMailList();
+            } else {
+                alert('Ой, что-то пошло не так');
+            }
+        });
+}
 
 function initDepartment() {
     new Http()
@@ -53,7 +171,6 @@ function toggleDepartment(id, callback = null) {
     }
     activeEl.addClass('open-tree');
     new Http()
-        .body()
         .method("GET")
         .url('/api/department/' + id + '/addressees')
         .preloader('#addressee-container')
@@ -90,15 +207,6 @@ function onClickCheckAddressee(parent_id, event) {
     $('#select-all-' + parent_id).prop('checked', all.length === selected.length);
 }
 
-function getDetails(id, view) {
-    // $('.addressee-list-item').removeClass('selected');
-    // $('.auto-checked').prop('checked', false);
-    // $('.auto-checked').removeClass('auto-checked');
-    // $(view).addClass('selected');
-    // $(view).find('input').addClass('auto-checked');
-    // $(view).find('input').prop('checked', true);
-    // updateMailList(id);
-}
 
 
 function updateMailList() {
@@ -130,6 +238,7 @@ function updateMailList() {
                     let node = table.row.add([item.id, item.subject, a_name.join(', '), '<div>' + translateStatus(item.status) + '</div>', created.toLocaleDateString()])
                         .draw()
                         .node();
+                    $(node).attr('id', 'mail_' + item.id);
                     $(node).addClass(item.status.toLowerCase());
 
                 });
@@ -174,6 +283,24 @@ function selectAll(id, state) {
 
 function sendNow() {
 
+    toggleSchedule(false);
+
+    let dateStart = $('#schedule-date').val().split('.');
+    let period = $('#schedule-period').val();
+    let date = new Date();
+    date.setFullYear(dateStart[2], dateStart[1], dateStart[0]);
+    let a = date.getTime();
+    console.log(date);
+    console.log(a);
+
+    console.log(dateStart);
+    console.log(period);
+
+    let task = new MailTask();
+    task.startTime = date.getTime();
+    task.period = period;
+    // task.repeatsLeft =  period === 0 ? 0 : -1;
+
     let check = $('.department-child-list li input:checked');
     let addressees = [];
 
@@ -206,6 +333,7 @@ function sendNow() {
     mail.addressee = addressees;
     mail.subject = subject;
     mail.message = text;
+    mail.mailTask = task;
 
     let json = JSON.stringify(mail);
     new Http()
@@ -220,8 +348,7 @@ function sendNow() {
             }
 
             showAlert('Сообщение добавлено в очередь отправки', 'alert-success');
-            $('#new-message-subject').val('');
-            $('#new-message-text').val('');
+            resetForm();
 
             if (mail.addressee.length === 1) {
                 updateMailList(mail.addressee[0].id);
@@ -230,11 +357,25 @@ function sendNow() {
         });
 }
 
-function createModal(title, text) {
+function resetForm() {
+    $('#schedule-period').val('ONCE');
+    let datapicker = $('.datepicker');
+    datapicker.datepicker('setDate', new Date());
 
-    $('#dynamic-modal .title').text(title);
+    $('#new-message-subject').val('');
+    $('#new-message-text').val('');
+}
+
+function createModal(title, text, footer = null) {
+
+    $('#dynamic-modal .modal-title').text(title);
     $('#dynamic-modal .modal-body').empty().append(text);
+    $('#dynamic-modal .modal-footer').empty().append(footer);
     $('#dynamic-modal').modal('show');
+}
+
+function destroyModal() {
+    $('#dynamic-modal').modal('hide');
 }
 
 var timeoutInstan = null;
@@ -261,6 +402,26 @@ function showAlert(text, style) {
 function hideAlert() {
 
 }
+
+function toggleSchedule(isShow) {
+    if (isShow) {
+        // $('.schedule-container *').show();
+        $('#schedule-btn-toggle').hide();
+
+        $('.schedule-container').animate({width: '100%', height: '100%', top: '-40px'}, 200, function () {
+            $('#schedule-btn-create').show();
+            $('.schedule-container .datepicker').datepicker('show');
+        });
+
+    } else {
+        $('.schedule-container .datepicker').datepicker('hide');
+        $('.schedule-container').animate({width: 0, height: 0, top: '100%'}, 200, function () {
+            $('#schedule-btn-toggle').show();
+        });
+
+    }
+}
+
 
 class Http {
 

@@ -111,4 +111,21 @@ public class RestApiController {
                 new ResponseEntity<>(body, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/mail/{id}", method = RequestMethod.GET)
+    public Mail getMail(@PathVariable("id") Long id) {
+        return mailService.findById(id);
+    }
+
+    @RequestMapping(value="/mail/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity changeMail(@PathVariable("id") Long id,  @RequestBody Mail mailIn) {
+        Mail mail = mailService.findById(id);
+        if (mail == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        mail.setStatus(mailIn.getStatus());
+        Mail save = mailService.save(mail);
+        return new ResponseEntity<>(save != null ? HttpStatus.ACCEPTED : HttpStatus.CONFLICT);
+    }
+
 }
