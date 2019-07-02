@@ -287,8 +287,10 @@ function sendNow() {
 
     let dateStart = $('#schedule-date').val().split('.');
     let period = $('#schedule-period').val();
+
     let date = new Date();
-    date.setFullYear(dateStart[2], dateStart[1], dateStart[0]);
+    date.setFullYear(dateStart[2], dateStart[1] - 1, dateStart[0]);
+
     let a = date.getTime();
     console.log(date);
     console.log(a);
