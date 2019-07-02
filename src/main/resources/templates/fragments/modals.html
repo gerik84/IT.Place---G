@@ -68,20 +68,83 @@
         </div>
     </div>
 
-    <div class="modal" id="dynamic-modal">
-        <div class="modal-dialog modal-sm">
+
+    <div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="dynamic-modal" role="dialog"
+         tabindex="-1">
+        <div class="modal-dialog  modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="title"></h6>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
 
-                    <div class="text-right">
-                        <button class="btn btn-primary">OK</button>
+                    <div class="d-flex">
+                        <div class="w-25">
+                            <div>Получатели:</div>
+                            <div id="modal-addressee-list">
+                                <div>
+                                    <div>Павел</div>
+                                    <div class="font-small">pavel.asdevel@gmail.com</div>
+                                </div>
+                                <div>
+                                    <div>Влад</div>
+                                    <div class="font-small">pavel.asdevel@gmail.com</div>
+                                </div>
+                                <div>
+                                    <div>Галина</div>
+                                    <div class="font-small">pavel.asdevel@gmail.com</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="w-75">
+
+                            <div><span>Создано:&nbsp;</span><span id="mail-mail-created">20.02.2019</span></div>
+                            <div class="d-flex align-items-center">
+                                <div>Статус:&nbsp;</div>
+                                <select class="form-control" id="mail-mail-status">
+                                    <option>Новое</option>
+                                    <option>Отменено</option>
+                                    <option>Отправлено</option>
+                                </select>
+                            </div>
+                            <div>Текст сообщения:</div>
+                            <div id="modal-mail-message">Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                Tincidunt tortor aliquam nulla facilisi. Enim tortor at auctor urna. Tincidunt id
+                                aliquet risus feugiat in ante metus dictum. Quam id leo in vitae turpis. Viverra nam
+                                libero justo laoreet sit amet cursus sit amet. Pellentesque habitant morbi tristique
+                                senectus et. Quisque egestas diam in arcu cursus euismod quis viverra nibh. Phasellus
+                                egestas tellus rutrum tellus pellentesque eu tincidunt tortor. Nullam vehicula ipsum a
+                                arcu. Massa placerat duis ultricies lacus sed turpis tincidunt id aliquet. Sit amet
+                                consectetur adipiscing elit ut aliquam. Non pulvinar neque laoreet suspendisse interdum
+                                consectetur libero.
+
+                                Integer eget aliquet nibh praesent tristique magna. Eros donec ac odio tempor orci. Dui
+                                faucibus in ornare quam viverra. Dictum sit amet justo donec enim. Aliquam sem et tortor
+                                consequat id. Nam libero justo laoreet sit amet. Semper auctor neque vitae tempus quam
+                                pellentesque nec nam aliquam. Viverra accumsan in nisl nisi scelerisque eu ultrices
+                                vitae. Turpis nunc eget lorem dolor sed viverra ipsum. A erat nam at lectus urna duis
+                                convallis convallis tellus. Duis ut diam quam nulla porttitor. Non diam phasellus
+                                vestibulum lorem sed risus ultricies tristique nulla. Ipsum dolor sit amet consectetur
+                                adipiscing elit.
+                            </div>
+                        </div>
+
                     </div>
+
+                </div>
+                <div class="modal-footer">
+
                 </div>
             </div>
         </div>
     </div>
+
 </div>
+
 </html>

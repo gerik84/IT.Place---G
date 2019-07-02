@@ -8,6 +8,7 @@
     <title>Email manager</title>
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link href="/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-datepicker.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/small-business.css">
     <link rel="stylesheet" href="/css/main.css">
 </head>
@@ -16,7 +17,7 @@
 <div th:replace="fragments/navbar :: navbar"></div>
 <div th:replace="fragments/modals :: modals"></div>
 
-<div class="container" style="height: 90vh; padding: 20px 0 0 0;">
+<div class="container main-container">
 
 
     <div class="row h-100">
@@ -41,14 +42,60 @@
             <div class="card shadow">
                 <div class="card-body" id="create-message-container">
                     <h2 class="text-center">Создать новую рассылку</h2>
-                    <label for="new-message-subject">Тема сообщения:</label>
-                    <input class="form-control" id="new-message-subject"/><br>
-                    <label for="new-message-text">Текст сообщения:</label>
-                    <textarea class="form-control" rows="3" id="new-message-text"></textarea><br>
-                    <div class="text-right">
-                        <div class="btn-group">
-                            <button class="btn btn-primary" onclick="sendNow()">Создать рассылку</button>
+                    <div class="position-relative">
+
+                        <div class="schedule-container">
+
+                            <div class="controll d-flex flex-grow-0 align-items-center"
+                                 style="margin-bottom: 10px;">
+                                <div class="w-100"><img height="32px" src="../images/timetable.svg" width="32px"/></div>
+                                <div class="close" onclick="toggleSchedule(false)">&times;</div>
+                            </div>
+
+                            <div class="flex-grow-1 d-flex schedule-content">
+                                <div class="w-100">
+                                    <div>Дата начала</div>
+                                    <input class="datepicker form-control" id="schedule-date"/>
+                                </div>
+                                <div class="w-100">
+                                    <div>Период</div>
+                                    <select class="form-control" id="schedule-period">
+                                        <option value="ONCE">Единожды</option>
+                                        <option value="DAILY">Каждый день</option>
+                                        <option value="WEEKLY">Каждую неделю</option>
+                                        <option value="MONTHLY">Каждый месяц</option>
+                                        <option value="YEARLY">каждый год</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex-grow-0 text-right"></div>
+
                         </div>
+
+                        <label for="new-message-subject">Тема сообщения:</label>
+                        <input class="form-control" id="new-message-subject"/><br>
+                        <label for="new-message-text">Текст сообщения:</label>
+                        <textarea class="form-control" id="new-message-text" rows="3"></textarea><br>
+                        <div class="text-right">
+                            <div class="btn-group justify-content-center align-items-center w-100">
+
+                                <div class="w-100" id="schedule-btn-toggle">
+                                    <div class="schedule-icon" onclick="toggleSchedule(true);"></div>
+                                    <div class="schedule-info">
+                                        <div class="date font-small"></div>
+                                        <div class="period font-small"></div>
+                                    </div>
+                                </div>
+
+                                <div class="text-right w-100">
+                                    <button class="btn btn-primary flex-grow-0" onclick="sendNow()">
+                                        Создать рассылку
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </div>
@@ -84,6 +131,8 @@
 <script src="/vendor/jquery/jquery.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/js/jquery.dataTables.min.js"></script>
+<script src="/js/bootstrap-datepicker.min.js"></script>
+<script src="/js/bootstrap-datepicker.ru.min.js"></script>
 <script src="/js/main.js"></script>
 <script src="/js/entity.js"></script>
 </body>

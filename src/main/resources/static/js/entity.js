@@ -10,7 +10,7 @@ class Mail {
 
 class MailTask {
     startTime;
-    intervalTime;
+    period;
     repeatsLeft;
 }
 
