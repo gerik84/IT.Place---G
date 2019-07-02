@@ -1,9 +1,6 @@
 package com.itplace.emailmanager.controller;
 
-import com.itplace.emailmanager.domain.Addressee;
-import com.itplace.emailmanager.domain.Department;
-import com.itplace.emailmanager.domain.Mail;
-import com.itplace.emailmanager.domain.Sender;
+import com.itplace.emailmanager.domain.*;
 import com.itplace.emailmanager.security.UserDetails.UserDetailsImpl;
 import com.itplace.emailmanager.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +123,23 @@ public class RestApiController {
         mail.setStatus(mailIn.getStatus());
         Mail save = mailService.save(mail);
         return new ResponseEntity<>(save != null ? HttpStatus.ACCEPTED : HttpStatus.CONFLICT);
+    }
+
+    @RequestMapping(value="/mail/{id}/task/status/{status}", method = RequestMethod.PATCH)
+    public ResponseEntity changeTaskStatus(@PathVariable("id") Long id, @PathVariable("status") MailTask.STATUS status) {
+        Mail mail = mailService.findById(id);
+        if (mail == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            mail.getMailTask().setStatus(status);
+            mailService.save(mail);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
     }
 
 }

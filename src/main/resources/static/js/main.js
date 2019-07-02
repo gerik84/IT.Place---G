@@ -76,6 +76,10 @@ function getDetails(id) {
                 ' <div>Получатели:</div>' +
                 '<div id="modal-addressee-list">';
 
+            let created = new Date(0);
+            created.setMilliseconds(msg.whenCreated);
+
+
             msg.addressee.forEach(function (address) {
 
                 html += '<div>' +
@@ -86,32 +90,28 @@ function getDetails(id) {
             html += '</div>';
             html += '</div>';
             html += '<div class="w-75">' +
-                '   <div><span>Создано:&nbsp;</span><span id="mail-mail-created">' + msg.whenCreated + '</span></div>' +
+                '   <div><span>Создано:&nbsp;</span><span id="mail-mail-created">' + created.toLocaleDateString() + '</span></div>' +
                 '   <div class="d-flex align-items-center">' +
-                '       <div>Статус:&nbsp;</div>' +
-                '       <select class="form-control" id="mail-mail-status">' +
-                '           <option value="NEW">Новое</option>' +
-                '           <option value="CANCELLED">Отменить</option>' +
-                '           <option>Отправлено</option>' +
-                '       </select>' +
+                '   <div>Статус:&nbsp;<span>' + translateStatus(msg.mailTask.status) + '</span></div>' +
                 '</div>' +
                 '<div>Текст сообщения:</div>' +
                 '   <div id="modal-mail-message">' + msg.message + '</div>' +
                 '</div>';
-
-
             html += '</div>';
 
-            let footer = '  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
-                '<button type="button" class="btn btn-primary" onclick="editMail( ' + msg.id + ')">Сохранить</button>';
+            let footer = '';
+            footer += '  <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>' ;
+            footer += '<button type="button" class="btn btn-primary" onclick="changeStatus( ' + msg.id + ', \'' + (msg.mailTask.status === 'IN_PROGRESS' ? 'PAUSED' : 'IN_PROGRESS') + '\')">' + (msg.mailTask.status === 'IN_PROGRESS' ? 'Приостановить' : 'Возобновить') + '</button>';
+
+
             createModal(msg.subject, html, footer);
         });
 
 
 }
 
-function editMail(id) {
-    let status = $('#mail-mail-status').children('option:selected').val();
+function changeStatus(id, status) {
+    // let status = $('#mail-mail-status').children('option:selected').val();
     let mail = new Mail();
     mail.id = id;
     mail.status = status;
@@ -120,7 +120,7 @@ function editMail(id) {
         .preloader('body')
         .method('PATCH')
         .body(json)
-        .url('/api/mail/' + id)
+        .url('/api/mail/' + id + '/task/status/' + status )
         .send(function (msg, statusCode) {
             if (statusCode === 202) {
                 showAlert('Статус рассылки успешно изменен', 'alert-success');
@@ -235,7 +235,7 @@ function updateMailList() {
 
                     let created = new Date(0);
                     created.setMilliseconds(item.whenCreated);
-                    let node = table.row.add([item.id, item.subject, a_name.join(', '), '<div>' + translateStatus(item.status) + '</div>', created.toLocaleDateString()])
+                    let node = table.row.add([item.id, item.subject, a_name.join(', '), '<div>' + translateStatus(item.mailTask.status) + '</div>', created.toLocaleDateString()])
                         .draw()
                         .node();
                     $(node).attr('id', 'mail_' + item.id);
@@ -250,15 +250,16 @@ function translateStatus(status) {
     let result = status;
     switch (status.toUpperCase()) {
         case 'NEW':
-            result = 'Новое';
+            result = 'Новая задача';
             break;
-        case 'SENDING':
-            result = 'В очереди';
-            break; case 'SENT':
-            result = 'Отправлено';
+        case 'IN_PROGRESS':
+            result = 'Выполняется';
             break;
-        case 'FAILED':
-            result = 'Ошибка';
+        case 'PAUSED':
+            result = 'приостановлена';
+            break;
+        case 'DONE':
+            result = 'выполнено';
             break;
         case 'CANCELLED':
             result = 'Отмененное';
