@@ -25,7 +25,7 @@ public class EmailSenderService {
 
     @Async
     public CompletableFuture<Mail> sendMail(String toEmail, Mail mail) throws InterruptedException {
-        mailService.changeStatus(mail, Mail.STATUS.SENDING);
+        mailService.changeMailStatus(mail, Mail.STATUS.SENDING);
 
         MailTask currentTask = mail.getMailTask();
         try {
@@ -39,7 +39,7 @@ public class EmailSenderService {
             email.setMsg(mail.getMessage());
             email.addTo(toEmail);
             email.send();
-            mailService.changeStatus(mail, Mail.STATUS.SENT);
+            mailService.changeMailStatus(mail, Mail.STATUS.SENT);
             switch (currentTask.getPeriod()){
                 case ONCE:
                     currentTask.setStatus(MailTask.STATUS.DONE);
@@ -66,7 +66,7 @@ public class EmailSenderService {
                 }
             }
         } catch (EmailException e) {
-            mailService.changeStatus(mail, Mail.STATUS.FAILED, e.getMessage());
+            mailService.changeMailStatus(mail, Mail.STATUS.FAILED, e.getMessage());
         }
         mailTaskService.save(currentTask);
         return CompletableFuture.completedFuture(mail);

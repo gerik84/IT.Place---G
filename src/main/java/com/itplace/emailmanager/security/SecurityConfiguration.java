@@ -27,15 +27,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
+//        super.configure(http);
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/login*", "/resources/**").permitAll()
-                    .antMatchers("/index", "/api/**").hasAnyRole("ROLE_ADMIN", "ROLE_USER")
-                    .antMatchers("/admin").hasAnyRole("ROLE_ADMIN")
+                    .antMatchers("/resources/**").permitAll()
+                    .antMatchers("/", "/index", "/api/**").authenticated()
+                    .antMatchers("/admin").access("hasRole('ROLE_ADMIN')")
+                .and().formLogin()
+                    .loginPage("/login").defaultSuccessUrl("/")
                 .and().logout()
-                    .permitAll().deleteCookies("JSESSIONID")
+                    .permitAll().deleteCookies("JSESSIONID").logoutSuccessUrl("/login")
                 .and().rememberMe()
                     .key("uniqueAndSecret").userDetailsService(userDetailsService);
     }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,7 +30,7 @@
 
         <div class="col-4 card shadow p-3" id="addressee-container">
 
-            <div class="text-center flex-grow-0">
+            <div class="text-center flex-grow-0" sec:authorize="hasRole('ADMIN')">
                 <div class="btn-group">
                     <button class="btn btn-light" onclick="addDepartment()" type="button">Добавить департамент</button>
                 </div>

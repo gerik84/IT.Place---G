@@ -30,7 +30,7 @@ public class EmailScheduler {
                 try {
                     completableFutures.add(emailService.sendMail(addressee.getEmail(), mail));
                 } catch (InterruptedException e) {
-                    mailService.changeStatus(mail, Mail.STATUS.FAILED, e.getMessage());
+                    mailService.changeMailStatus(mail, Mail.STATUS.FAILED, e.getMessage());
             }
             });
         });

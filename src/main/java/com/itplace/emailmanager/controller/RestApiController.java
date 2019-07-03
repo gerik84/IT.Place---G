@@ -32,8 +32,10 @@ public class RestApiController {
     MailService mailService;
     @Autowired
     SenderService senderService;
-
-    // получение данных
+    @Autowired
+    AddresseeImportExport addresseeImportExport;
+    @Autowired
+    AddresseeImportExport importExport;
 
     @GetMapping("/mails")
     public List<Mail> getMailsWithSenderId(@RequestParam(value = "first", required = false) Integer _first,
@@ -44,8 +46,6 @@ public class RestApiController {
         Long sender_id = senderService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
         return mailService.findByAll(sender_id, _first, _max, _sort, _direction);
     }
-
-
 
     @GetMapping("/mails/page/{pageNo}/{pageSize}/{sorted}")
     public List<Mail> getMailsByPageNo(@PathVariable int pageNo, @PathVariable int pageSize, @PathVariable String sorted){
@@ -71,8 +71,6 @@ public class RestApiController {
     public ResponseEntity getSenders(){
         return createResponse(senderService.findAll());
     }
-
-    // сохранение объектов
 
     @RequestMapping(value = "/mail", method = RequestMethod.POST)
     public ResponseEntity saveMail(@RequestBody Mail mail){
@@ -126,8 +124,7 @@ public class RestApiController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        mail.setStatus(mailIn.getStatus());
-        Mail save = mailService.save(mail);
+        Mail save = mailService.changeMailStatus(mail, mailIn.getStatus());
         return new ResponseEntity<>(save != null ? HttpStatus.ACCEPTED : HttpStatus.CONFLICT);
     }
 
@@ -137,7 +134,6 @@ public class RestApiController {
         if (mail == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         try {
             mail.getMailTask().setStatus(status);
             mailService.save(mail);
@@ -145,11 +141,13 @@ public class RestApiController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-
     }
 
-    @Autowired
-    AddresseeImportExport importExport;
+    @GetMapping("/addressee/export")
+    public ResponseEntity exportAddressees(@RequestBody String path){
+        return new ResponseEntity<>(addresseeImportExport.exportToFile
+                (addresseeService.findAll(), path) ? HttpStatus.ACCEPTED : HttpStatus.CONFLICT);
+    }
 
     @RequestMapping(value = "/department/{id}", method = RequestMethod.DELETE)
     public ResponseEntity deleteDepartment(@PathVariable("id") Long id) {
@@ -167,7 +165,7 @@ public class RestApiController {
     }
 
     @RequestMapping(value = "/addressee/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteAddresse(@PathVariable("id") Long id) {
+    public ResponseEntity deleteAddressee(@PathVariable("id") Long id) {
         Addressee addressee = addresseeService.findById(id);
         if (addressee == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -257,6 +255,5 @@ public class RestApiController {
 
 
     }
-
 
 }

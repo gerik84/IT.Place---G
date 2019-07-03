@@ -46,4 +46,8 @@ public class AddresseeService extends BaseRepository<AddresseeRepository, Addres
         if (!repository.existsByEmailEqualsIgnoreCase(addressee.getEmail())) return repository.save(addressee);
         else return null;
     }
+
+    public void saveList(List<Addressee> importList) {
+        importList.forEach(this::createNewAddressee);
+    }
 }
