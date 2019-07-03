@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <div th:fragment="navbar">
     <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
         <div class="container d-flex align-items-center justify-content-center">
@@ -21,7 +22,7 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin"><img src="../images/config.svg" style="width: 24px; height: 24px"/></a>
+                        <a sec:authorize="hasRole('ADMIN')" class="nav-link" href="/admin"><img src="../images/config.svg" style="width: 24px; height: 24px"/></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/logout"><img src="../images/logout.svg" style="width: 24px; height: 24px"/></a>
