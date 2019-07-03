@@ -169,7 +169,7 @@ function initDepartment() {
                 msg.forEach(function (it) {
                     html += '<li id="department_' + it.id + '">' +
                         '<div class="department-name d-flex align-items-center"  id="department-name-' + it.id + '">' +
-                        '<input type="checkbox"  id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
+                        '<div class="moz-border"><input type="checkbox"  id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" /></div>' +
                         '<div class="list-department-item w-100" onclick="toggleDepartment(' + it.id + ')" >' + it.name + '</div>' +
                         '<div class="control-container ' + (adminMode ? '' : 'd-none') + '">' +
                         '   <div class="control add" onclick="addAddressee(' + it.id + ')"></div>' +
@@ -389,7 +389,7 @@ function toggleDepartment(id, state = null, callback = null) {
                 msg.forEach(function (it) {
                     html += ' <li class="addressee-list-item">' +
                         '<div class="w-100">' +
-                        '<div><input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/></div>' +
+                        '<div class="moz-border"><input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/></div>' +
                         '<div class="d-flex flex-column w-100">' +
                         '<div>' + it.name + '</div>' +
                         '<div class="font-small">' + it.email + '</div>' +
