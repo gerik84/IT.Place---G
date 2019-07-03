@@ -46,20 +46,25 @@ public class AddresseeImportExport {
         return addresseeList;
     }
 
-    public void exportToFile(List<Addressee> addresseeList, String stringPath) throws IOException {
-        File outputFile = new File(stringPath);
-        if (outputFile.createNewFile()) {
-            List<String[]> linesToWrite = new ArrayList<>();
-            CSVWriter csvWriter = new CSVWriter(new FileWriter(outputFile));
-            addresseeList.forEach(addressee -> {
-                List<String> line = new ArrayList<>();
-                line.add(addressee.getEmail());
-                line.add(addressee.getName());
-                line.add(addressee.getDepartment().getName());
-                linesToWrite.add(line.toArray(new String[0]));
-            });
-            csvWriter.writeAll(linesToWrite);
-            csvWriter.close();
+    public boolean exportToFile(List<Addressee> addresseeList, String stringPath) {
+        try {
+            File outputFile = new File(stringPath);
+            if (outputFile.createNewFile()) {
+                List<String[]> linesToWrite = new ArrayList<>();
+                CSVWriter csvWriter = new CSVWriter(new FileWriter(outputFile));
+                addresseeList.forEach(addressee -> {
+                    List<String> line = new ArrayList<>();
+                    line.add(addressee.getEmail());
+                    line.add(addressee.getName());
+                    line.add(addressee.getDepartment().getName());
+                    linesToWrite.add(line.toArray(new String[0]));
+                });
+                csvWriter.writeAll(linesToWrite);
+                csvWriter.close();
+            }
+        } catch (IOException e) {
+            return false;
         }
+        return true;
     }
 }

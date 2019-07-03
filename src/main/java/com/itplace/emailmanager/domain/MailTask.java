@@ -47,7 +47,7 @@ public class MailTask extends BaseIdentifierEntity {
     }
 
     /**
-     * @param status NEW - новая задача; IN_PROGRESS - выполняется; DONE - выполнена; PAUSED - приостановлена
+     * @param status NEW - новая задача; IN_PROGRESS - выполняется; PAUSED - приостановлена; DONE - выполнена
      *
      */
     public void setStatus(STATUS status) {

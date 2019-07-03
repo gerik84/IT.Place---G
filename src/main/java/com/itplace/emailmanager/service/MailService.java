@@ -22,7 +22,7 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
      */
     public List<Mail> findMailToSend() {
         return repository.findByWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndMailTask_StatusNotAndStatusNot
-                (System.currentTimeMillis(), MailTask.STATUS.DONE, MailTask.STATUS.PAUSED, Mail.STATUS.SENDING);
+                (System.currentTimeMillis(), MailTask.STATUS.PAUSED, MailTask.STATUS.DONE, Mail.STATUS.SENDING);
     }
 
     @Override
@@ -35,26 +35,23 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         if (mail.getMailTask() == null) {
             mailTask = new MailTask();
             mailTask.setStartTime(System.currentTimeMillis());
-            mailTaskService.save(mailTask);
         }
-        else mailTaskService.save(mail.getMailTask());
-
-        mailTask = mailTaskService.getLastAdded();
-        mail.setMailTask(mailTask);
+        MailTask taskToAdd = mailTaskService.save(mail.getMailTask());
+        mail.setMailTask(taskToAdd);
         return repository.save(mail);
     }
 
-    public void changeStatus(Mail mail, Mail.STATUS status){
+    public Mail changeMailStatus(Mail mail, Mail.STATUS status){
         MailLog mailLog = new MailLog();
         mailLog.setMailStatus(status);
         mailLogService.save(mailLog);
         mail.getMailLog().add(mailLog);
 
         mail.setStatus(status);
-        repository.save(mail);
+        return repository.save(mail);
     }
 
-    public void changeStatus(Mail mail, Mail.STATUS status, String message){
+    public Mail changeMailStatus(Mail mail, Mail.STATUS status, String message){
         MailLog mailLog = new MailLog();
         mailLog.setMailStatus(status);
         mailLog.setMessage(message.length() > 255 ? message.substring(0, 255) : message);
@@ -62,7 +59,14 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         mail.getMailLog().add(mailLog);
 
         mail.setStatus(status);
-        repository.save(mail);
+        return repository.save(mail);
+    }
+
+    public Mail changeTaskStatus(Mail mail, MailTask.STATUS status){
+        MailTask mailTask = mail.getMailTask();
+        mailTask.setStatus(status);
+        mailTaskService.save(mailTask);
+        return repository.save(mail);
     }
 
     public List<Mail> findBySubjectLike(String subject) {
