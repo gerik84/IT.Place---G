@@ -40,7 +40,7 @@ public class EmailScheduler {
     @Bean
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(mailService.findMailToSend().size()*10);
+        executor.setCorePoolSize(100);
         executor.setMaxPoolSize(100);
         executor.setQueueCapacity(1000);
         executor.setThreadNamePrefix("emailSenderThread-");
