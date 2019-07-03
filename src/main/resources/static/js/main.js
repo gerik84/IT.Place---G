@@ -58,7 +58,30 @@ $().ready(function () {
     });
     periodInfoView.text(periodSelectView.children("option:selected").text());
 
+
+    $(document).on('submit', '.form-ajax', function () {
+
+        return false;
+
+    })
 });
+
+$.fn.serializeObject = function () {
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function () {
+        if (o[this.name]) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
 
 function getDetails(id) {
 
@@ -144,13 +167,16 @@ function initDepartment() {
             if (msg !== null && msg.length > 0) {
                 msg.forEach(function (it) {
                     html += '<li id="department_' + it.id + '">' +
-                        '<div class="department-name d-flex align-items-end"  id="department-name-' + it.id + '">' +
+                        '<div class="department-name d-flex align-items-center"  id="department-name-' + it.id + '">' +
                         '<input type="checkbox" id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
-                        '<div class="list-department-item" onclick="toggleDepartment('+it.id+')" >' + it.name + '</div>' +
+                        '<div class="list-department-item w-100" onclick="toggleDepartment(' + it.id + ')" >' + it.name + '</div>' +
+                        '<div class="control-container ' + (adminMode ? '' : 'd-none') + '">' +
+                        '   <div class="control add" onclick="addAddressee(' + it.id + ')"></div>' +
+                        '   <div class="control edit" onclick="editDepartment(' + it.id + ', \'' + it.name + '\')"></div>' +
+                        '   <div class="control delete" onclick="deleteDepartment(' + it.id + ')"></div></div>' +
                         '</div>' +
                         '<ul class="department-child-list" id="child_' + it.id + '"></ul>' +
                         '</li>';
-
                 });
                 $('#addressee-list').empty().append(html);
             } else {
@@ -159,16 +185,198 @@ function initDepartment() {
         });
 }
 
-function toggleDepartment(id, callback = null) {
+
+function sendForm(form, callback, isFile = false) {
+    let data;
+    if (!isFile) {
+        data = $(form).serializeObject();
+    } else {
+        let a = $(form).find('input[type="file"]');
+        data = new FormData;
+        data.append('file', a.prop('files')[0]);
+
+        $.ajax({
+            url: $(form).attr('action'),
+            type: "POST",
+            data: data, // this will get all the input fields of your form.
+            enctype: 'multipart/form-data',
+            processData: false,  // tell jQuery not to process the data
+            contentType: false,   // tell jQuery not to set contentType
+            dataType: 'json', // as you want
+            complete: function (response, code) {
+                callback(response, code);
+            }
+        });
+
+        return false;
+
+    }
+
+
+    new Http()
+    // .preloader('#table-mails')
+        .method($(form).attr('method'))
+        .url($(form).attr('action'))
+        .body(JSON.stringify(data))
+        .send(function (msg, status) {
+            callback(msg, status);
+        });
+
+    return false;
+}
+
+function callbackDepartment(msg, status) {
+    initDepartment();
+    destroyModal();
+    showAlert('Успешно изменено', 'alert-success');
+}
+
+function callbackAddressee(msg, status) {
+    $('input:checked').prop('checked', false);
+    toggleDepartment(msg.department.id, true);
+    destroyModal();
+    showAlert('Успешно изменено', 'alert-success');
+}
+
+function editDepartment(id, name) {
+
+    let html = '<form class="form-ajax d-flex" action="/api/department/' + id + '" method="patch" onsubmit="sendForm(this, callbackDepartment);">' +
+        '<input class="form-control" name="name" value="' + name + '" />' +
+        '<input class="btn btn-primary" type="submit" value="Сохранить"></form>';
+    createModal('Редактировать департамент', html, null);
+
+}
+
+function editAddressee(id, name, email) {
+    let html = '<form class="form-ajax d-flex" action="/api/addressee/' + id + '" method="patch" onsubmit="sendForm(this, callbackAddressee);">' +
+        '<input class="form-control" name="name" value="' + name + '" />' +
+        '<input class="form-control" type="email" name="email" value="' + email + '" />' +
+        // '<input class="form-control" name="department" value="' + email + '" />' +
+        '<input class="btn btn-primary" type="submit" value="Сохранить"></form>';
+    createModal('Редактировать адрессата', html, null);
+}
+
+function addAddressee(id) {
+
+    let html = '<ul class="nav nav-tabs" id="myTab" role="tablist">' +
+        '  <li class="nav-item">' +
+        '    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Одного</a>' +
+        '  </li>' +
+        '  <li class="nav-item">' +
+        '    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Из файла</a>' +
+        '  </li>' +
+        '</ul>' +
+        '<div class="tab-content" id="myTabContent">' +
+        '<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"> <br/>' +
+        '<form class="form-ajax d-flex" action="/api/department/' + id + '/addressee" method="POST" onsubmit="sendForm(this, callbackDepartment);">' +
+        '<input class="form-control" name="name" placeholder="Имя" />' +
+        '<input class="form-control" name="email"  type="email" placeholder="Email" />' +
+        // '<input class="form-control" name="department" value="' + email + '" />' +
+        '<input class="btn btn-primary" type="submit" value="Сохранить"></form>' +
+        '</div>' +
+        '<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab"><br/>' +
+        '<form class="form-ajax" action="/api/department/' + id + '/csv/file" method="post" enctype="multipart/form-data"  onsubmit="sendForm(this, callbackDepartment, true);">' +
+        '                        <div class="input-group">' +
+        '                            <div class="custom-file">' +
+        '                                <input type="file" name="file" />' +
+        '                            </div>' +
+        '                        </div>' +
+        '                        <div class="text-right">' +
+        '                           <input type="submit" class="btn btn-primary" value="Добавить"/>' +
+        '                        </div>' +
+        '</form>' +
+        '</div>'
+    '</div>';
+
+    createModal('Создать адрессата', html, null);
+}
+
+let adminMode = false;
+
+function toggleMode(view) {
+
+    adminMode = !adminMode;
+    if (adminMode) {
+        $('.control-container')
+            .removeClass('d-none')
+            .show();
+        $(view).addClass('config_on');
+    } else {
+        $('.control-container')
+            .addClass('d-none')
+            .hide();
+        $(view).removeClass('config_on');
+    }
+    console.log('asd');
+
+}
+
+function deleteDepartment(id) {
+    if (confirm('При удалении департаменты будут удалены все получатели. Вы точно желаете удалить?')) {
+        new Http()
+            .body()
+            .method("DELETE")
+            .url('/api/department/' + id)
+            .preloader('#addressee-container')
+            .send(function (msg, status) {
+                if (status !== 200) {
+                    alert('Ой, что-то пошло не так');
+                    return;
+                }
+                showAlert('Департамент удален', 'alert-success');
+                initDepartment();
+            });
+    }
+}
+
+function deleteAddressee(id, department_id) {
+    if (confirm('Вы точно желаете удалить?')) {
+        new Http()
+            .body()
+            .method("DELETE")
+            .url('/api/addressee/' + id)
+            .preloader('#addressee-container')
+            .send(function (msg, status) {
+                if (status !== 200) {
+                    alert('Ой, что-то пошло не так');
+                    return;
+                }
+                showAlert('Адрессат удален', 'alert-success');
+                toggleDepartment(department_id, true);
+
+            });
+    }
+}
+
+function addDepartment() {
+    let html = '<form class="form-ajax d-flex" action="/api/department" method="post" onsubmit="sendForm(this, callbackDepartment);">' +
+        '<input class="form-control" name="name" value="' + name + '" />' +
+        // '<input class="form-control" name="department" value="' + email + '" />' +
+        '<input class="btn btn-primary" type="submit" value="Создать"></form>';
+
+    createModal('Создать департамент', html, null);
+
+    // new Http()
+    //     .body()
+    //     .method("POST")
+    //     .url('/api/department')
+    //     .preloader('#addressee-container')
+    //     .send(function (msg, status) {
+    //         initDepartment();
+    //     });
+}
+
+function toggleDepartment(id, state = null, callback = null) {
     let root = $('#department_' + id);
 
     let activeEl = root.find('.department-name');
 
-    if (activeEl.hasClass('open-tree')) {
+    if (activeEl.hasClass('open-tree') && state === null) {
         root.find('ul').hide();
         activeEl.removeClass('open-tree');
         return false;
     }
+
     activeEl.addClass('open-tree');
     new Http()
         .method("GET")
@@ -179,11 +387,15 @@ function toggleDepartment(id, callback = null) {
             if (msg !== null && msg.length > 0) {
                 msg.forEach(function (it) {
                     html += ' <li class="addressee-list-item">' +
-                        '<input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/>' +
-                        '<div class="d-flex flex-column">' +
+                        '<div class="w-100">' +
+                        '<div><input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/></div>' +
+                        '<div class="d-flex flex-column w-100">' +
                         '<div>' + it.name + '</div>' +
                         '<div class="font-small">' + it.email + '</div>' +
-                        '</div></li>';
+                        '</div>' +
+                        '<div class="control-container ' + (adminMode ? '' : 'd-none') + '"><div class="control edit" onclick="editAddressee(' + it.id + ', \'' + it.name + '\' , \'' + it.email + '\' )"></div><div class="control delete" onclick="deleteAddressee(' + it.id + ', ' + id + ')"></div></div>' +
+                        '</div>' +
+                        '</li>';
                 });
                 html += '';
                 root.find('ul').empty();
@@ -217,7 +429,7 @@ function updateMailList() {
         .preloader('#mail-list-container')
         .send(function (msg, code) {
 
-            html = '';
+            let html = '';
             if (msg.length === 0) {
                 html += '<div class="text-center">Список рассылок пуст</div>'
             } else {
@@ -274,7 +486,7 @@ function selectAll(id, state) {
     $('#child_' + id + ' li input').prop('checked', state);
     //
     if (state && !$('#department-name-' + id).hasClass('open-tree')) {
-        toggleDepartment(id, function () {
+        toggleDepartment(id, null, function () {
             $('#department_' + id + ' li input').prop('checked', state);
         })
     } else {

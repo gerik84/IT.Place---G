@@ -17,7 +17,7 @@ public interface AddresseeRepository extends LongJpaRepository<Addressee> {
 
     List<Addressee> findByWhenDeletedIsNull(Pageable pageable);
 
-    List<Addressee> findByDepartmentId(Long departmentId);
+    List<Addressee> findByDepartmentIdAndWhenDeletedIsNull(Long departmentId);
 
     boolean existsByEmailEqualsIgnoreCase(String email);
 }
