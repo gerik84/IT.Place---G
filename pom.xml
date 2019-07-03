@@ -10,7 +10,7 @@
         <version>2.1.6.RELEASE</version>
         <relativePath/>
     </parent>
-    
+
     <groupId>com.itplace</groupId>
     <artifactId>emailmanager</artifactId>
     <version>0.0.2-SNAPSHOT</version>

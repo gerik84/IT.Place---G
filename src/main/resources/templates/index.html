@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Email manager</title>
+
+    <link href="/images/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+    <link href="/images/favicon/favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
+    <link href="/images/favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link href="/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="/css/bootstrap-datepicker.min.css" rel="stylesheet">
@@ -24,16 +30,15 @@
 
         <div class="col-4 card shadow p-3" id="addressee-container">
 
-            <div class="text-center flex-grow-0">
+            <div class="text-center flex-grow-0" sec:authorize="hasRole('ADMIN')">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#addModal">Добавить</button>
-                    <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#addFromFileModal">Добавить из файла</button>
+                    <button class="btn btn-light" onclick="addDepartment()" type="button">Добавить департамент</button>
                 </div>
             </div>
             <div class="flex-grow-0">
                 <input type="text" class="form-control" id="searchAddressee" placeholder="Фильтр...">
             </div>
-            <div class="h-100 flex-grow-1">
+            <div class="h-100 flex-grow-1 overflow-auto">
                 <ul id="addressee-list" class="noselect">
               </ul>
             </div>
