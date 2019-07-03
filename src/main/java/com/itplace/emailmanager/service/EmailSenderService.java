@@ -75,7 +75,7 @@ public class EmailSenderService {
     private long getPeriodLong(MailTask.PERIOD period) {
         long day = 24 * 60 * 60 * 1000;
         switch (period) {
-            case DAILY: return /*day*/ 30000;
+            case DAILY: return day;
             case WEEKLY: return 7 * day;
             case MONTHLY: return YearMonth.now().lengthOfMonth() * day;
             case YEARLY: return YearMonth.now().lengthOfYear() * day;

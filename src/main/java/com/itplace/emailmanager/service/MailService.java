@@ -62,13 +62,6 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         return repository.save(mail);
     }
 
-    public Mail changeTaskStatus(Mail mail, MailTask.STATUS status){
-        MailTask mailTask = mail.getMailTask();
-        mailTask.setStatus(status);
-        mailTaskService.save(mailTask);
-        return repository.save(mail);
-    }
-
     public List<Mail> findBySubjectLike(String subject) {
         return repository.findBySubjectIgnoreCaseLike(subject);
     }
