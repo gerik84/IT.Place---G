@@ -1,3 +1,4 @@
+'use strict';
 let table = null;
 
 
@@ -168,7 +169,7 @@ function initDepartment() {
                 msg.forEach(function (it) {
                     html += '<li id="department_' + it.id + '">' +
                         '<div class="department-name d-flex align-items-center"  id="department-name-' + it.id + '">' +
-                        '<input type="checkbox" id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
+                        '<input type="checkbox"  id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" />' +
                         '<div class="list-department-item w-100" onclick="toggleDepartment(' + it.id + ')" >' + it.name + '</div>' +
                         '<div class="control-container ' + (adminMode ? '' : 'd-none') + '">' +
                         '   <div class="control add" onclick="addAddressee(' + it.id + ')"></div>' +
@@ -638,12 +639,13 @@ function toggleSchedule(isShow) {
 }
 
 
+
 class Http {
 
-    _method;
-    _body;
-    _url;
-    _preloader;
+    // _method;
+    // _body;
+    // _url;
+    // _preloader;
 
     method(m) {
         this._method = m;
