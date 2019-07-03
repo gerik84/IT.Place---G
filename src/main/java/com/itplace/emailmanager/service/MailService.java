@@ -25,11 +25,6 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
                 (System.currentTimeMillis(), MailTask.STATUS.PAUSED, MailTask.STATUS.DONE, Mail.STATUS.SENDING);
     }
 
-    @Override
-    public Mail save(Mail model) {
-        return createNewMail(model);
-    }
-
     public Mail createNewMail(Mail mail){
         MailTask mailTask;
         if (mail.getMailTask() == null) {
@@ -42,8 +37,8 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
     }
 
     public Mail changeMailStatus(Mail mail, Mail.STATUS status){
-        MailLog mailLog = new MailLog();
-        mailLog.setMailStatus(status);
+        MailLog mailLog = MailLog.builder()
+                .mailStatus(status).build();
         mailLogService.save(mailLog);
         mail.getMailLog().add(mailLog);
 
@@ -52,9 +47,8 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
     }
 
     public Mail changeMailStatus(Mail mail, Mail.STATUS status, String message){
-        MailLog mailLog = new MailLog();
-        mailLog.setMailStatus(status);
-        mailLog.setMessage(message.length() > 255 ? message.substring(0, 255) : message);
+        MailLog mailLog = MailLog.builder()
+                .mailStatus(status).message(message.length() > 255 ? message.substring(0, 255) : message).build();
         mailLogService.save(mailLog);
         mail.getMailLog().add(mailLog);
 

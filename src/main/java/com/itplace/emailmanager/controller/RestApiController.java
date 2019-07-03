@@ -134,6 +134,7 @@ public class RestApiController {
         if (mail == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
         try {
             mail.getMailTask().setStatus(status);
             mailService.save(mail);
@@ -235,7 +236,6 @@ public class RestApiController {
     @Transactional
     @RequestMapping(value = "/department/{id}/csv/file", method = RequestMethod.POST)
     public ResponseEntity handleFileUpload(@PathVariable("id") Long department_id, @RequestParam("file") MultipartFile file) {
-
         Department department = departmentService.findById(department_id);
         if (department == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -252,8 +252,6 @@ public class RestApiController {
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-
-
     }
 
 }
