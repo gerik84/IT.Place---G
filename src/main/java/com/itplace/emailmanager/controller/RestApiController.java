@@ -7,6 +7,7 @@ import com.itplace.emailmanager.util.AddresseeImportExport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 @RestController
 @RequestMapping("/api")
@@ -97,8 +99,11 @@ public class RestApiController {
 
     @RequestMapping(value = "/sender", method = RequestMethod.POST)
     public ResponseEntity addSender(@RequestBody Sender sender){
-        Sender created = senderService.save(sender);
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().noneMatch((Predicate<GrantedAuthority>) grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN")))
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
+        Sender created = senderService.save(sender);
         return new ResponseEntity<>(created != null ? HttpStatus.CREATED : HttpStatus.CONFLICT);
     }
 

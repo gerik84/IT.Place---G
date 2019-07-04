@@ -1,4 +1,4 @@
-MERGE INTO ROLE (name) VALUES ('ROLE_ADMIN'),
+INSERT INTO ROLE (name) VALUES ('ROLE_ADMIN'),
                               ('ROLE_USER');
 
 -- DEBUG DATA

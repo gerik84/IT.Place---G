@@ -6,6 +6,7 @@ import com.itplace.emailmanager.domain.MailTask;
 import com.itplace.emailmanager.repositry.MailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,11 +21,13 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
      * Не удаленные сообщения с временем отправки меньше текущего,
      * с незавершенной задачей и не стоящие в очереди на отправку
      */
+    @Transactional
     public List<Mail> findMailToSend() {
         return repository.findByWhenDeletedNullAndMailTask_StartTimeIsLessThanAndMailTask_StatusNotAndMailTask_StatusNotAndStatusNot
                 (System.currentTimeMillis(), MailTask.STATUS.PAUSED, MailTask.STATUS.DONE, Mail.STATUS.SENDING);
     }
 
+    @Transactional
     public Mail createNewMail(Mail mail){
         MailTask mailTask;
         if (mail.getMailTask() == null) {
@@ -36,6 +39,7 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         return repository.save(mail);
     }
 
+    @Transactional
     public Mail changeMailStatus(Mail mail, Mail.STATUS status){
         MailLog mailLog = MailLog.builder()
                 .mailStatus(status).build();
@@ -46,6 +50,7 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         return repository.save(mail);
     }
 
+    @Transactional
     public Mail changeMailStatus(Mail mail, Mail.STATUS status, String message){
         MailLog mailLog = MailLog.builder()
                 .mailStatus(status).message(message.length() > 255 ? message.substring(0, 255) : message).build();
@@ -56,18 +61,22 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         return repository.save(mail);
     }
 
+    @Transactional
     public List<Mail> findBySubjectLike(String subject) {
         return repository.findBySubjectIgnoreCaseLike(subject);
     }
 
+    @Transactional
     public Mail findBySubject(String subject){
         return repository.findBySubjectEquals(subject);
     }
 
+    @Transactional
     public List<Mail> findByAddresseId(Long id) {
         return repository.findByAddresseeId(id);
     }
-  
+
+    @Transactional
     public List<Mail> findByAll(Long senderId, Integer page, Integer page_size, String sort, String direction) {
         return repository.findBySenderId(senderId, createPageable(page, page_size, sort, direction));
     }
