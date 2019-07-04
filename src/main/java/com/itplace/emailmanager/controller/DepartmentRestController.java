@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 
+@RestController
 public class DepartmentRestController extends RestApiController {
 
     @Autowired
