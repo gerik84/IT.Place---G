@@ -715,8 +715,8 @@ function searchAddressee(text) {
                 if (msg !== null && msg.length > 0) {
                     msg.forEach(function (department) {
                         html += '<li id="department_' + department.id + '">' +
-                            '<div class="department-name d-flex align-items-center open-tree"  id="department-name-' + department.id + '">' +
-                            '<div class="moz-border d-flex"><input type="checkbox"  id="select-all-' + department.id + '" onclick="selectAll(' + department.id + ', $(this).is(\':checked\'))" /></div>' +
+                            '<div class="department-name d-flex align-items-center open-tree" style="opacity: .8"  id="department-name-' + department.id + '">' +
+                            '<div class="moz-border d-flex"><input style="opacity: 1" type="checkbox"  id="select-all-' + department.id + '" onclick="selectAll(' + department.id + ', $(this).is(\':checked\'))" /></div>' +
                             '<div class="list-department-item w-100 ">' + department.name + '</div>' +
                             '<div class="control-container ' + (adminMode ? '' : 'd-none') + '">' +
                             '   <div class="control add" onclick="addAddressee(' + department.id + ')"></div>' +
