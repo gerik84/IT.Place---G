@@ -125,13 +125,12 @@ function getDetails(id) {
 
             let footer = '';
             footer += '  <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>' ;
-            footer += '<button type="button" class="btn btn-primary" onclick="changeStatus( ' + msg.id + ', \'' + (msg.mailTask.status === 'IN_PROGRESS' ? 'PAUSED' : 'IN_PROGRESS') + '\')">' + (msg.mailTask.status === 'IN_PROGRESS' ? 'Приостановить' : 'Возобновить') + '</button>';
-
-
+            if (msg.mailTask.status !== 'DONE') {
+                footer += '<button type="button" class="btn btn-primary" onclick="changeStatus( ' + msg.id + ', \'' + (msg.mailTask.status === 'IN_PROGRESS' ? 'PAUSED' : 'IN_PROGRESS') + '\')">' + (msg.mailTask.status === 'IN_PROGRESS' ? 'Приостановить' : 'Возобновить') + '</button>';
+                footer += '<button type="button" class="btn btn-primary" onclick="changeStatus( ' + msg.id + ', \'' + 'DONE' + '\')">' + 'Завершить' + '</button>';
+            }
             createModal(msg.subject, html, footer);
         });
-
-
 }
 
 function changeStatus(id, status) {
@@ -147,11 +146,11 @@ function changeStatus(id, status) {
         .url('/api/mail/' + id + '/task/status/' + status )
         .send(function (msg, statusCode) {
             if (statusCode === 202) {
-                showAlert('Статус рассылки успешно изменен', 'alert-success');
+                showAlert('Статус рассылки успешно изменен.', 'alert-success');
                 destroyModal();
                 updateMailList();
             } else {
-                alert('Ой, что-то пошло не так');
+                alert('Ой, что-то пошло не так!');
             }
         });
 }
@@ -208,9 +207,7 @@ function sendForm(form, callback, isFile = false) {
                 callback(response, code);
             }
         });
-
         return false;
-
     }
 
 
@@ -229,14 +226,14 @@ function sendForm(form, callback, isFile = false) {
 function callbackDepartment(msg, status) {
     initDepartment();
     destroyModal();
-    showAlert('Успешно изменено', 'alert-success');
+    showAlert('Успешно изменено.', 'alert-success');
 }
 
 function callbackAddressee(msg, status) {
     $('input:checked').prop('checked', false);
     toggleDepartment(msg.department.id, true);
     destroyModal();
-    showAlert('Успешно изменено', 'alert-success');
+    showAlert('Успешно изменено.', 'alert-success');
 }
 
 function editDepartment(id, name) {
@@ -254,7 +251,7 @@ function editAddressee(id, name, email) {
         '<input class="form-control" type="email" name="email" value="' + email + '" />' +
         // '<input class="form-control" name="department" value="' + email + '" />' +
         '<input class="btn btn-primary" type="submit" value="Сохранить"></form>';
-    createModal('Редактировать адрессата', html, null);
+    createModal('Редактировать адресата', html, null);
 }
 
 function addAddressee(id) {
@@ -289,7 +286,7 @@ function addAddressee(id) {
         '</div>'
     '</div>';
 
-    createModal('Создать адрессата', html, null);
+    createModal('Создать адресата', html, null);
 }
 
 let adminMode = false;
@@ -313,7 +310,7 @@ function toggleMode(view) {
 }
 
 function deleteDepartment(id) {
-    if (confirm('При удалении департаменты будут удалены все получатели. Вы точно желаете удалить?')) {
+    if (confirm('При удалении департамента будут удалены все получатели. Вы точно желаете удалить?')) {
         new Http()
             .body()
             .method("DELETE")
@@ -321,10 +318,10 @@ function deleteDepartment(id) {
             .preloader('#addressee-container')
             .send(function (msg, status) {
                 if (status !== 200) {
-                    alert('Ой, что-то пошло не так');
+                    alert('Ой, что-то пошло не так!');
                     return;
                 }
-                showAlert('Департамент удален', 'alert-success');
+                showAlert('Департамент удален.', 'alert-success');
                 initDepartment();
             });
     }
@@ -339,10 +336,10 @@ function deleteAddressee(id, department_id) {
             .preloader('#addressee-container')
             .send(function (msg, status) {
                 if (status !== 200) {
-                    alert('Ой, что-то пошло не так');
+                    alert('Ой, что-то пошло не так!');
                     return;
                 }
-                showAlert('Адрессат удален', 'alert-success');
+                showAlert('Адресат удален.', 'alert-success');
                 toggleDepartment(department_id, true);
 
             });
@@ -432,7 +429,7 @@ function updateMailList() {
 
             let html = '';
             if (msg.length === 0) {
-                html += '<div class="text-center">Список рассылок пуст</div>'
+                html += '<div class="text-center">Список рассылок пока пуст</div>'
             } else {
 
                 table.rows().remove();
@@ -469,15 +466,11 @@ function translateStatus(status) {
             result = 'Выполняется';
             break;
         case 'PAUSED':
-            result = 'приостановлена';
+            result = 'Приостановлена';
             break;
         case 'DONE':
-            result = 'выполнено';
+            result = 'Выполнена';
             break;
-        case 'CANCELLED':
-            result = 'Отмененное';
-            break;
-
     }
     return result;
 
@@ -521,7 +514,7 @@ function sendNow() {
     let addressees = [];
 
     if (check.length === 0) {
-        showAlert('Необходимо выбрать получателя', 'alert-danger');
+        showAlert('Необходимо выбрать получателя.', 'alert-danger');
         return;
     }
 
@@ -536,7 +529,7 @@ function sendNow() {
     let text = $('#new-message-text').val();
 
     if (subject.length === 0 || text.length === 0) {
-        showAlert('Необходимо заполнить <b>Тему</b> и <b>Текст</b> письма', 'alert-danger');
+        showAlert('Необходимо заполнить <b>Тему</b> и <b>Текст</b> письма.', 'alert-danger');
         return;
     }
 
@@ -559,11 +552,11 @@ function sendNow() {
         .preloader('#create-message-container')
         .send(function (msg, code) {
             if (code !== 201) {
-                alert('Ой, что-то пошло не так, повторите попытку поже');
+                alert('Ой, что-то пошло не так, повторите попытку поже!');
                 return;
             }
 
-            showAlert('Сообщение добавлено в очередь отправки', 'alert-success');
+            showAlert('Сообщение добавлено в очередь отправки.', 'alert-success');
             resetForm();
 
             if (mail.addressee.length === 1) {
