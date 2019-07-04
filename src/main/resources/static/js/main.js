@@ -254,7 +254,7 @@ function editAddressee(id, name, email) {
         '<input class="form-control" type="email" name="email" value="' + email + '" />' +
         // '<input class="form-control" name="department" value="' + email + '" />' +
         '<input class="btn btn-primary" type="submit" value="Сохранить"></form>';
-    createModal('Редактировать адрессата', html, null);
+    createModal('Редактировать адресата', html, null);
 }
 
 function addAddressee(id) {
@@ -289,7 +289,7 @@ function addAddressee(id) {
         '</div>'
     '</div>';
 
-    createModal('Создать адрессата', html, null);
+    createModal('Создать адресата', html, null);
 }
 
 let adminMode = false;
@@ -342,7 +342,7 @@ function deleteAddressee(id, department_id) {
                     alert('Ой, что-то пошло не так');
                     return;
                 }
-                showAlert('Адрессат удален', 'alert-success');
+                showAlert('Адресат удален', 'alert-success');
                 toggleDepartment(department_id, true);
 
             });
