@@ -1,5 +1,8 @@
 package com.itplace.emailmanager.controller;
 
+import com.itplace.emailmanager.dto.AddresseeDto;
+import com.itplace.emailmanager.domain.Addressee;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
