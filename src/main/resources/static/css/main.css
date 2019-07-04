@@ -218,11 +218,15 @@ textarea {
     font-size: 14px;
 }
 
+#table-mails tbody tr td {
+    white-space: nowrap;
+}
+
 #table-mails tbody tr td:nth-child(2), #table-mails tbody tr td:nth-child(3) {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap; /* Отменяем перенос текста */
+    white-space: nowrap;
     max-width: 10px;
 }
 
