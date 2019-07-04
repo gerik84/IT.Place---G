@@ -30,12 +30,12 @@ abstract public class RestApiController {
 
     protected final static List<Role.ROLE> only_admin = new ArrayList<>();
     static {
-        allow_all.add(Role.ROLE.ROLE_ADMIN);
+        only_admin.add(Role.ROLE.ROLE_ADMIN);
     }
 
     protected final static List<Role.ROLE> only_user = new ArrayList<>();
     static {
-        allow_all.add(Role.ROLE.ROLE_USER);
+        only_user.add(Role.ROLE.ROLE_USER);
     }
 
     protected ResponseEntity createResponse(Object body) {
@@ -43,11 +43,12 @@ abstract public class RestApiController {
                 new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    protected  <T extends BaseDto> String createMapper(BaseEntity model, Class<T> clazz) {
+    protected  <T extends BaseDto> String createMapper(Object model) {
+
         ObjectMapper mapper = new ObjectMapper();
         try {
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            return mapper.writeValueAsString(new ModelMapper().map(model, clazz));
+            return mapper.writeValueAsString(model);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -60,18 +61,8 @@ abstract public class RestApiController {
                 .getAuthentication()
                 .getAuthorities()
                 .stream()
-                .anyMatch(
-                        (Predicate<GrantedAuthority>) grantedAuthority -> {
-                            boolean isAllow = false;
-                            for (Role.ROLE role : allow_roles) {
-                                isAllow = grantedAuthority.getAuthority().equals(role.toString());
-
-                                if (isAllow) {
-                                    break;
-                                }
-                            }
-                            return isAllow;
-                        });
+                .anyMatch((Predicate<GrantedAuthority>) grantedAuthority -> allow_roles.stream()
+                        .anyMatch(role -> grantedAuthority.getAuthority().equals(role.toString())));
     }
 
 }

@@ -125,13 +125,12 @@ function getDetails(id) {
 
             let footer = '';
             footer += '  <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>' ;
-            footer += '<button type="button" class="btn btn-primary" onclick="changeStatus( ' + msg.id + ', \'' + (msg.mailTask.status === 'IN_PROGRESS' ? 'PAUSED' : 'IN_PROGRESS') + '\')">' + (msg.mailTask.status === 'IN_PROGRESS' ? 'Приостановить' : 'Возобновить') + '</button>';
-
-
+            if (msg.mailTask.status !== 'DONE') {
+                footer += '<button type="button" class="btn btn-primary" onclick="changeStatus( ' + msg.id + ', \'' + (msg.mailTask.status === 'IN_PROGRESS' ? 'PAUSED' : 'IN_PROGRESS') + '\')">' + (msg.mailTask.status === 'IN_PROGRESS' ? 'Приостановить' : 'Возобновить') + '</button>';
+                footer += '<button type="button" class="btn btn-primary" onclick="changeStatus( ' + msg.id + ', \'' + 'DONE' + '\')">' + 'Завершить' + '</button>';
+            }
             createModal(msg.subject, html, footer);
         });
-
-
 }
 
 function changeStatus(id, status) {
@@ -147,11 +146,11 @@ function changeStatus(id, status) {
         .url('/api/mail/' + id + '/task/status/' + status )
         .send(function (msg, statusCode) {
             if (statusCode === 202) {
-                showAlert('Статус рассылки успешно изменен', 'alert-success');
+                showAlert('Статус рассылки успешно изменен.', 'alert-success');
                 destroyModal();
                 updateMailList();
             } else {
-                alert('Ой, что-то пошло не так');
+                alert('Ой, что-то пошло не так!');
             }
         });
 }
@@ -169,7 +168,7 @@ function initDepartment() {
                 msg.forEach(function (it) {
                     html += '<li id="department_' + it.id + '">' +
                         '<div class="department-name d-flex align-items-center"  id="department-name-' + it.id + '">' +
-                        '<div class="moz-border"><input type="checkbox"  id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" /></div>' +
+                        '<div class="moz-border d-flex"><input type="checkbox"  id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" /></div>' +
                         '<div class="list-department-item w-100" onclick="toggleDepartment(' + it.id + ')" >' + it.name + '</div>' +
                         '<div class="control-container ' + (adminMode ? '' : 'd-none') + '">' +
                         '   <div class="control add" onclick="addAddressee(' + it.id + ')"></div>' +
@@ -208,9 +207,7 @@ function sendForm(form, callback, isFile = false) {
                 callback(response, code);
             }
         });
-
         return false;
-
     }
 
 
@@ -229,14 +226,14 @@ function sendForm(form, callback, isFile = false) {
 function callbackDepartment(msg, status) {
     initDepartment();
     destroyModal();
-    showAlert('Успешно изменено', 'alert-success');
+    showAlert('Успешно изменено.', 'alert-success');
 }
 
 function callbackAddressee(msg, status) {
     $('input:checked').prop('checked', false);
     toggleDepartment(msg.department.id, true);
     destroyModal();
-    showAlert('Успешно изменено', 'alert-success');
+    showAlert('Успешно изменено.', 'alert-success');
 }
 
 function editDepartment(id, name) {
@@ -313,7 +310,7 @@ function toggleMode(view) {
 }
 
 function deleteDepartment(id) {
-    if (confirm('При удалении департаменты будут удалены все получатели. Вы точно желаете удалить?')) {
+    if (confirm('При удалении департамента будут удалены все получатели. Вы точно желаете удалить?')) {
         new Http()
             .body()
             .method("DELETE")
@@ -321,10 +318,10 @@ function deleteDepartment(id) {
             .preloader('#addressee-container')
             .send(function (msg, status) {
                 if (status !== 200) {
-                    alert('Ой, что-то пошло не так');
+                    alert('Ой, что-то пошло не так!');
                     return;
                 }
-                showAlert('Департамент удален', 'alert-success');
+                showAlert('Департамент удален.', 'alert-success');
                 initDepartment();
             });
     }
@@ -339,10 +336,10 @@ function deleteAddressee(id, department_id) {
             .preloader('#addressee-container')
             .send(function (msg, status) {
                 if (status !== 200) {
-                    alert('Ой, что-то пошло не так');
+                    alert('Ой, что-то пошло не так!');
                     return;
                 }
-                showAlert('Адресат удален', 'alert-success');
+                showAlert('Адресат удален.', 'alert-success');
                 toggleDepartment(department_id, true);
 
             });
@@ -389,7 +386,7 @@ function toggleDepartment(id, state = null, callback = null) {
                 msg.forEach(function (it) {
                     html += ' <li class="addressee-list-item">' +
                         '<div class="w-100">' +
-                        '<div class="moz-border"><input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/></div>' +
+                        '<div class="moz-border d-flex"><input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/></div>' +
                         '<div class="d-flex flex-column w-100">' +
                         '<div>' + it.name + '</div>' +
                         '<div class="font-small">' + it.email + '</div>' +
@@ -432,7 +429,7 @@ function updateMailList() {
 
             let html = '';
             if (msg.length === 0) {
-                html += '<div class="text-center">Список рассылок пуст</div>'
+                html += '<div class="text-center">Список рассылок пока пуст</div>'
             } else {
 
                 table.rows().remove();
@@ -469,15 +466,11 @@ function translateStatus(status) {
             result = 'Выполняется';
             break;
         case 'PAUSED':
-            result = 'приостановлена';
+            result = 'Приостановлена';
             break;
         case 'DONE':
-            result = 'выполнено';
+            result = 'Выполнена';
             break;
-        case 'CANCELLED':
-            result = 'Отмененное';
-            break;
-
     }
     return result;
 
@@ -521,7 +514,7 @@ function sendNow() {
     let addressees = [];
 
     if (check.length === 0) {
-        showAlert('Необходимо выбрать получателя', 'alert-danger');
+        showAlert('Необходимо выбрать получателя.', 'alert-danger');
         return;
     }
 
@@ -536,7 +529,7 @@ function sendNow() {
     let text = $('#new-message-text').val();
 
     if (subject.length === 0 || text.length === 0) {
-        showAlert('Необходимо заполнить <b>Тему</b> и <b>Текст</b> письма', 'alert-danger');
+        showAlert('Необходимо заполнить <b>Тему</b> и <b>Текст</b> письма.', 'alert-danger');
         return;
     }
 
@@ -559,11 +552,11 @@ function sendNow() {
         .preloader('#create-message-container')
         .send(function (msg, code) {
             if (code !== 201) {
-                alert('Ой, что-то пошло не так, повторите попытку поже');
+                alert('Ой, что-то пошло не так, повторите попытку поже!');
                 return;
             }
 
-            showAlert('Сообщение добавлено в очередь отправки', 'alert-success');
+            showAlert('Сообщение добавлено в очередь отправки.', 'alert-success');
             resetForm();
 
             if (mail.addressee.length === 1) {
@@ -695,4 +688,64 @@ class Http {
 
         })
     }
+}
+
+let searcInstan = null;
+
+function searchAddressee(text) {
+
+    clearTimeout(searcInstan);
+
+
+    if (text === null || text.length === 0) {
+        initDepartment();
+        return;
+    }
+
+
+    searcInstan = setTimeout(function () {
+        new Http()
+            .method("GET")
+            .url('/api/addressee/find/' + encodeURI(text))
+            .preloader('#addressee-container')
+            .send(function (msg, code) {
+                // msg = JSON.parse(msg);
+                console.log(msg);
+                let html = '';
+                if (msg !== null && msg.length > 0) {
+                    msg.forEach(function (department) {
+                        html += '<li id="department_' + department.id + '">' +
+                            '<div class="department-name d-flex align-items-center open-tree"  id="department-name-' + department.id + '">' +
+                            '<div class="moz-border d-flex"><input type="checkbox"  id="select-all-' + department.id + '" onclick="selectAll(' + department.id + ', $(this).is(\':checked\'))" /></div>' +
+                            '<div class="list-department-item w-100 ">' + department.name + '</div>' +
+                            '<div class="control-container ' + (adminMode ? '' : 'd-none') + '">' +
+                            '   <div class="control add" onclick="addAddressee(' + department.id + ')"></div>' +
+                            '   <div class="control edit" onclick="editDepartment(' + department.id + ', \'' + department.name + '\')"></div>' +
+                            '   <div class="control delete" onclick="deleteDepartment(' + department.id + ')"></div></div>' +
+                            '</div>' +
+                            '<ul class="department-child-list" id="child_' + department.id + '">';
+
+                        department.addressees.forEach(function (addressee) {
+                            html += ' <li class="addressee-list-item">' +
+                                '<div class="w-100">' +
+                                '<div class="moz-border d-flex"><input type="checkbox" value="' + addressee.id + '"  /></div>' +
+                                '<div class="d-flex flex-column w-100">' +
+                                '<div>' + addressee.name + '</div>' +
+                                '<div class="font-small">' + addressee.email + '</div>' +
+                                '</div>' +
+                                '<div class="control-container ' + (adminMode ? '' : 'd-none') + '"><div class="control edit" onclick="editAddressee(' + addressee.id + ', \'' + addressee.name + '\' , \'' + addressee.email + '\' )"></div><div class="control delete" onclick="deleteAddressee(' + addressee.id + ', ' + department.id + ')"></div></div>' +
+                                '</div>' +
+                                '</li>';
+                        });
+
+
+                        html += '</ul>' +
+                            '</li>';
+                    });
+                    $('#addressee-list').empty().append(html);
+                } else {
+                    $('#addressee-list').empty().append('<div class="empty-table">Ничего не найдено</div>');
+                }
+            })
+    }, 300);
 }

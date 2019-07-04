@@ -429,3 +429,10 @@ textarea {
     background: url("../images/config_on.svg") no-repeat center;
     background-size: 24px 24px;
 }
+
+.empty-table {
+    font-weight: bold;
+    text-align: center;
+    background: url("../images/not-found.svg") no-repeat 0 center;
+    background-size: 24px;
+}

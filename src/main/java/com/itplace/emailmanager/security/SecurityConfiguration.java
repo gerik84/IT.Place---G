@@ -33,7 +33,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers("/resources/**").permitAll()
                     .antMatchers("/", "/index", "/api/**").authenticated()
-                    .antMatchers("/admin").access("hasRole('ROLE_ADMIN')")
                 .and().formLogin()
                     .loginPage("/login").defaultSuccessUrl("/")
                 .and().logout()
