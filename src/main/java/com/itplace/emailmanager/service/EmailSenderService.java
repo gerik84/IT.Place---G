@@ -78,7 +78,7 @@ public class EmailSenderService {
             case DAILY: return day;
             case WEEKLY: return 7 * day;
             case MONTHLY: return YearMonth.now().lengthOfMonth() * day;
-            case YEARLY: return 120000;
+            case YEARLY: return 300000;
         }
         return 0;
     }
