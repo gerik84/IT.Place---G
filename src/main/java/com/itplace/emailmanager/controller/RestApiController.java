@@ -43,11 +43,12 @@ abstract public class RestApiController {
                 new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    protected  <T extends BaseDto> String createMapper(BaseEntity model, Class<T> clazz) {
+    protected  <T extends BaseDto> String createMapper(Object model) {
+
         ObjectMapper mapper = new ObjectMapper();
         try {
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            return mapper.writeValueAsString(new ModelMapper().map(model, clazz));
+            return mapper.writeValueAsString(model);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

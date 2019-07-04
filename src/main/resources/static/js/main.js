@@ -168,7 +168,7 @@ function initDepartment() {
                 msg.forEach(function (it) {
                     html += '<li id="department_' + it.id + '">' +
                         '<div class="department-name d-flex align-items-center"  id="department-name-' + it.id + '">' +
-                        '<div class="moz-border"><input type="checkbox"  id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" /></div>' +
+                        '<div class="moz-border d-flex"><input type="checkbox"  id="select-all-' + it.id + '" onclick="selectAll(' + it.id + ', $(this).is(\':checked\'))" /></div>' +
                         '<div class="list-department-item w-100" onclick="toggleDepartment(' + it.id + ')" >' + it.name + '</div>' +
                         '<div class="control-container ' + (adminMode ? '' : 'd-none') + '">' +
                         '   <div class="control add" onclick="addAddressee(' + it.id + ')"></div>' +
@@ -353,15 +353,6 @@ function addDepartment() {
         '<input class="btn btn-primary" type="submit" value="Создать"></form>';
 
     createModal('Создать департамент', html, null);
-
-    // new Http()
-    //     .body()
-    //     .method("POST")
-    //     .url('/api/department')
-    //     .preloader('#addressee-container')
-    //     .send(function (msg, status) {
-    //         initDepartment();
-    //     });
 }
 
 function toggleDepartment(id, state = null, callback = null) {
@@ -375,6 +366,8 @@ function toggleDepartment(id, state = null, callback = null) {
         return false;
     }
 
+    let select = $('#select-all-' + id + ':checked').length > 0;
+
     activeEl.addClass('open-tree');
     new Http()
         .method("GET")
@@ -386,7 +379,7 @@ function toggleDepartment(id, state = null, callback = null) {
                 msg.forEach(function (it) {
                     html += ' <li class="addressee-list-item">' +
                         '<div class="w-100">' +
-                        '<div class="moz-border"><input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/></div>' +
+                        '<div class="moz-border d-flex"><input ' + (select ? 'checked' : '') + ' type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/></div>' +
                         '<div class="d-flex flex-column w-100">' +
                         '<div>' + it.name + '</div>' +
                         '<div class="font-small">' + it.email + '</div>' +
@@ -497,13 +490,6 @@ function sendNow() {
 
     let date = new Date();
     date.setFullYear(dateStart[2], dateStart[1] - 1, dateStart[0]);
-
-    let a = date.getTime();
-    console.log(date);
-    console.log(a);
-
-    console.log(dateStart);
-    console.log(period);
 
     let task = new MailTask();
     task.startTime = date.getTime();
@@ -688,4 +674,64 @@ class Http {
 
         })
     }
+}
+
+let searcInstan = null;
+
+function searchAddressee(text) {
+
+    clearTimeout(searcInstan);
+
+
+    searcInstan = setTimeout(function () {
+
+        if (text === null || text.length === 0) {
+            initDepartment();
+            return;
+        }
+
+        new Http()
+            .method("GET")
+            .url('/api/addressee/find/' + encodeURI(text))
+            .preloader('#addressee-container')
+            .send(function (msg, code) {
+                // msg = JSON.parse(msg);
+                console.log(msg);
+                let html = '';
+                if (msg !== null && msg.length > 0) {
+                    msg.forEach(function (department) {
+                        html += '<li id="department_' + department.id + '">' +
+                            '<div class="department-name d-flex align-items-center open-tree" style="opacity: .8"  id="department-name-' + department.id + '">' +
+                            '<div class="moz-border d-flex"><input style="opacity: 1" type="checkbox"  id="select-all-' + department.id + '" onclick="selectAll(' + department.id + ', $(this).is(\':checked\'))" /></div>' +
+                            '<div class="list-department-item w-100 ">' + department.name + '</div>' +
+                            '<div class="control-container ' + (adminMode ? '' : 'd-none') + '">' +
+                            '   <div class="control add" onclick="addAddressee(' + department.id + ')"></div>' +
+                            '   <div class="control edit" onclick="editDepartment(' + department.id + ', \'' + department.name + '\')"></div>' +
+                            '   <div class="control delete" onclick="deleteDepartment(' + department.id + ')"></div></div>' +
+                            '</div>' +
+                            '<ul class="department-child-list" id="child_' + department.id + '">';
+
+                        department.addressees.forEach(function (addressee) {
+                            html += ' <li class="addressee-list-item">' +
+                                '<div class="w-100">' +
+                                '<div class="moz-border d-flex"><input type="checkbox" value="' + addressee.id + '"  /></div>' +
+                                '<div class="d-flex flex-column w-100">' +
+                                '<div>' + addressee.name + '</div>' +
+                                '<div class="font-small">' + addressee.email + '</div>' +
+                                '</div>' +
+                                '<div class="control-container ' + (adminMode ? '' : 'd-none') + '"><div class="control edit" onclick="editAddressee(' + addressee.id + ', \'' + addressee.name + '\' , \'' + addressee.email + '\' )"></div><div class="control delete" onclick="deleteAddressee(' + addressee.id + ', ' + department.id + ')"></div></div>' +
+                                '</div>' +
+                                '</li>';
+                        });
+
+
+                        html += '</ul>' +
+                            '</li>';
+                    });
+                    $('#addressee-list').empty().append(html);
+                } else {
+                    $('#addressee-list').empty().append('<div class="empty-table">Ничего не найдено</div>');
+                }
+            })
+    }, 300);
 }

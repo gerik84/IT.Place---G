@@ -62,7 +62,7 @@ public class DepartmentRestController extends RestApiController {
         try {
             source.setDepartment(department);
             Addressee save = addresseeService.save(source, Addressee.class);
-            return new ResponseEntity<>(createMapper(save, AddresseeDto.class), HttpStatus.CREATED);
+            return new ResponseEntity<>(createMapper(save), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }

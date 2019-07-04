@@ -218,6 +218,18 @@ textarea {
     font-size: 14px;
 }
 
+#table-mails tbody tr td {
+    white-space: nowrap;
+}
+
+#table-mails tbody tr td:nth-child(2), #table-mails tbody tr td:nth-child(3) {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 10px;
+}
+
 #table-body .sent {
     color: green;
 }
@@ -428,4 +440,12 @@ textarea {
 .config_on {
     background: url("../images/config_on.svg") no-repeat center;
     background-size: 24px 24px;
+}
+
+.empty-table {
+    font-weight: bold;
+    text-align: center;
+    color: #898989;
+    background: url("../images/not-found.svg") no-repeat 0 center;
+    background-size: 24px;
 }

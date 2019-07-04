@@ -6,7 +6,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
-    <title>Email manager</title>
+    <title>G-Шоколад менеджер</title>
 
     <link href="/images/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
     <link href="/images/favicon/favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
@@ -36,7 +36,8 @@
                 </div>
             </div>
             <div class="flex-grow-0">
-                <input type="text" class="form-control" id="searchAddressee" placeholder="Фильтр...">
+                <input type="text" class="form-control" id="searchAddressee" placeholder="Поиск по имени или почте ..."
+                       onkeyup="searchAddressee(this.value)" />
             </div>
             <div class="h-100 flex-grow-1 overflow-auto">
                 <ul id="addressee-list" class="noselect">
@@ -78,9 +79,11 @@
                         </div>
 
                         <label for="new-message-subject">Тема сообщения:</label>
-                        <input class="form-control" id="new-message-subject"/><br>
+                        <input type="text" class="form-control" id="new-message-subject"
+                               placeholder="Заполните данные"/><br>
                         <label for="new-message-text">Текст сообщения:</label>
-                        <textarea class="form-control" id="new-message-text" rows="3"></textarea><br>
+                        <textarea class="form-control" id="new-message-text" rows="3"
+                                  placeholder="Заполните данные"></textarea><br>
                         <div class="text-right">
                             <div class="btn-group justify-content-center align-items-center w-100">
 
