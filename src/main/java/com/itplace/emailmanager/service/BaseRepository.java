@@ -1,8 +1,10 @@
 package com.itplace.emailmanager.service;
 
 import com.itplace.emailmanager.domain.BaseIdentifierEntity;
+import com.itplace.emailmanager.dto.BaseDto;
 import com.itplace.emailmanager.repositry.LongJpaRepository;
 import com.itplace.emailmanager.security.UserDetails.UserDetailsImpl;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import java.util.Optional;
 interface ServiceInterface<T extends BaseIdentifierEntity> {
 
     T save(T model);
+        <E extends BaseDto> T save(E model, Class<T> destinationType);
 
     void delete(T model);
 
@@ -44,6 +47,12 @@ public abstract class BaseRepository<R extends LongJpaRepository, T extends Base
     @Override
     public T save(T model) {
         return (T) repository.save(model);
+    }
+
+    @Override
+    public <E extends BaseDto> T save(E model, Class<T> destinationType) {
+        T entity = new ModelMapper().map(model, destinationType);
+        return (T) repository.save(entity);
     }
 
     @Override
