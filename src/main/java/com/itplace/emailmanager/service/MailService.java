@@ -54,7 +54,7 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
     public Mail changeMailStatus(Mail mail, Mail.STATUS status, String message){
         MailLog mailLog = new MailLog();
         mailLog.setMailStatus(status);
-        mail.setMessage(message.length() > 255 ? message.substring(0, 255) : message);
+        mailLog.setMessage(message.length() > 255 ? message.substring(0, 255) : message);
         MailLog savedLog = mailLogService.save(mailLog);
         mail.getMailLog().add(savedLog);
 
