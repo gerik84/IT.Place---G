@@ -433,6 +433,7 @@ textarea {
 .empty-table {
     font-weight: bold;
     text-align: center;
+    color: #898989;
     background: url("../images/not-found.svg") no-repeat 0 center;
     background-size: 24px;
 }
