@@ -11,17 +11,13 @@ import java.util.List;
 
 @Service
 public class DepartmentService extends BaseRepository<DepartmentRepository, Department> {
-
     @Autowired
     AddresseeService addresseeService;
 
+    @Transactional
     public Department createNewDepartment(Department department) {
         if (!repository.existsByNameEqualsIgnoreCase(department.getName())) return repository.save(department);
         else return null;
-    }
-
-    public Department findByNameEquals(String s) {
-        return repository.findByNameEquals(s);
     }
 
     @Transactional

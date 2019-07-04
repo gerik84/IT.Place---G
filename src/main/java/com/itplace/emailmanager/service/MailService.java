@@ -27,6 +27,7 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
                 (System.currentTimeMillis(), MailTask.STATUS.PAUSED, MailTask.STATUS.DONE, Mail.STATUS.SENDING);
     }
 
+    @Transactional
     public Mail createNewMail(Mail mail){
         MailTask mailTask;
         if (mail.getMailTask() == null) {
@@ -38,6 +39,7 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         return repository.save(mail);
     }
 
+    @Transactional
     public Mail changeMailStatus(Mail mail, Mail.STATUS status){
         MailLog mailLog = MailLog.builder()
                 .mailStatus(status).build();
@@ -48,6 +50,7 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         return repository.save(mail);
     }
 
+    @Transactional
     public Mail changeMailStatus(Mail mail, Mail.STATUS status, String message){
         MailLog mailLog = MailLog.builder()
                 .mailStatus(status).message(message.length() > 255 ? message.substring(0, 255) : message).build();
@@ -58,14 +61,17 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
         return repository.save(mail);
     }
 
+    @Transactional
     public List<Mail> findBySubjectLike(String subject) {
         return repository.findBySubjectIgnoreCaseLike(subject);
     }
 
+    @Transactional
     public Mail findBySubject(String subject){
         return repository.findBySubjectEquals(subject);
     }
 
+    @Transactional
     public List<Mail> findByAddresseId(Long id) {
         return repository.findByAddresseeId(id);
     }
