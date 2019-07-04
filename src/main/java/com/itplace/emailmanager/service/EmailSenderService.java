@@ -4,7 +4,6 @@ import com.itplace.emailmanager.domain.Mail;
 import com.itplace.emailmanager.domain.MailTask;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
-import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -24,7 +23,7 @@ public class EmailSenderService {
     private MailTaskService mailTaskService;
 
     @Async
-    public CompletableFuture<Mail> sendMail(String toEmail, Mail mail) throws InterruptedException {
+    public CompletableFuture<Mail> sendMail(String toEmail, Mail mail) throws Exception {
         mailService.changeMailStatus(mail, Mail.STATUS.SENDING);
 
         MailTask currentTask = mail.getMailTask();
@@ -65,7 +64,8 @@ public class EmailSenderService {
                     break;
                 }
             }
-        } catch (EmailException e) {
+        } catch (Exception e) {
+            currentTask.setStartTime(System.currentTimeMillis());
             mailService.changeMailStatus(mail, Mail.STATUS.FAILED, e.getMessage());
         }
         mailTaskService.save(currentTask);
@@ -75,10 +75,10 @@ public class EmailSenderService {
     private long getPeriodLong(MailTask.PERIOD period) {
         long day = 24 * 60 * 60 * 1000;
         switch (period) {
-            case DAILY: return /*day*/ 15000;
-            case WEEKLY: return /*7 * day*/ 30000;
-            case MONTHLY: return /*YearMonth.now().lengthOfMonth() * day*/ 60000;
-            case YEARLY: return /*YearMonth.now().lengthOfYear() * day*/ 120000;
+            case DAILY: return day;
+            case WEEKLY: return 7 * day;
+            case MONTHLY: return YearMonth.now().lengthOfMonth() * day;
+            case YEARLY: return YearMonth.now().lengthOfYear() * day;
         }
         return 0;
     }

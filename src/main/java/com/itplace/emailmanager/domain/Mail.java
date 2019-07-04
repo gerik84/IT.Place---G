@@ -3,6 +3,8 @@ package com.itplace.emailmanager.domain;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.util.List;
@@ -20,7 +22,8 @@ public class Mail extends BaseIdentifierEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Addressee> addressee;
     @ManyToMany(fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
+    @Fetch(value = FetchMode.SELECT)
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<MailLog> mailLog;
     @ManyToOne
     private Sender sender;

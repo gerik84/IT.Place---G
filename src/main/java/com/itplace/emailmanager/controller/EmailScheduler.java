@@ -29,7 +29,7 @@ public class EmailScheduler {
             mail.getAddressee().forEach(addressee -> {
                 try {
                     completableFutures.add(emailService.sendMail(addressee.getEmail(), mail));
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     mailService.changeMailStatus(mail, Mail.STATUS.FAILED, e.getMessage());
             }
             });
