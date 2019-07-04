@@ -353,15 +353,6 @@ function addDepartment() {
         '<input class="btn btn-primary" type="submit" value="Создать"></form>';
 
     createModal('Создать департамент', html, null);
-
-    // new Http()
-    //     .body()
-    //     .method("POST")
-    //     .url('/api/department')
-    //     .preloader('#addressee-container')
-    //     .send(function (msg, status) {
-    //         initDepartment();
-    //     });
 }
 
 function toggleDepartment(id, state = null, callback = null) {
@@ -375,6 +366,8 @@ function toggleDepartment(id, state = null, callback = null) {
         return false;
     }
 
+    let select = $('#select-all-' + id + ':checked').length > 0;
+
     activeEl.addClass('open-tree');
     new Http()
         .method("GET")
@@ -386,7 +379,7 @@ function toggleDepartment(id, state = null, callback = null) {
                 msg.forEach(function (it) {
                     html += ' <li class="addressee-list-item">' +
                         '<div class="w-100">' +
-                        '<div class="moz-border d-flex"><input type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/></div>' +
+                        '<div class="moz-border d-flex"><input ' + (select ? 'checked' : '') + ' type="checkbox" value="' + it.id + '"  onclick="onClickCheckAddressee( ' + id + ', event)"/></div>' +
                         '<div class="d-flex flex-column w-100">' +
                         '<div>' + it.name + '</div>' +
                         '<div class="font-small">' + it.email + '</div>' +
@@ -497,13 +490,6 @@ function sendNow() {
 
     let date = new Date();
     date.setFullYear(dateStart[2], dateStart[1] - 1, dateStart[0]);
-
-    let a = date.getTime();
-    console.log(date);
-    console.log(a);
-
-    console.log(dateStart);
-    console.log(period);
 
     let task = new MailTask();
     task.startTime = date.getTime();
