@@ -697,13 +697,13 @@ function searchAddressee(text) {
     clearTimeout(searcInstan);
 
 
-    if (text === null || text.length === 0) {
-        initDepartment();
-        return;
-    }
-
-
     searcInstan = setTimeout(function () {
+
+        if (text === null || text.length === 0) {
+            initDepartment();
+            return;
+        }
+
         new Http()
             .method("GET")
             .url('/api/addressee/find/' + encodeURI(text))
