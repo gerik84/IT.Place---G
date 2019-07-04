@@ -19,20 +19,6 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/api")
 public class RestApiController {
-    @Autowired
-    private AddresseeService addresseeService;
-    @Autowired
-    private DepartmentService departmentService;
-    @Autowired
-    private MailTaskService mailTaskService;
-    @Autowired
-    private MailService mailService;
-    @Autowired
-    private SenderService senderService;
-    @Autowired
-    private AddresseeImportExport addresseeImportExport;
-    @Autowired
-    private AddresseeImportExport importExport;
 
     protected ResponseEntity createResponse(Object body) {
         return body == null ?  new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK) :
