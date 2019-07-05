@@ -1,8 +1,10 @@
 package com.itplace.emailmanager.controller;
 
 import com.itplace.emailmanager.domain.Mail;
+import com.itplace.emailmanager.domain.MailTask;
 import com.itplace.emailmanager.service.MailService;
 import com.itplace.emailmanager.service.EmailSenderService;
+import com.itplace.emailmanager.service.MailTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,7 +31,7 @@ public class EmailScheduler {
             mail.getAddressee().forEach(addressee -> {
                 try {
                     completableFutures.add(emailService.sendMail(addressee.getEmail(), mail));
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     mailService.changeMailStatus(mail, Mail.STATUS.FAILED, e.getMessage());
             }
             });

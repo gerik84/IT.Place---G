@@ -41,10 +41,10 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
 
     @Transactional
     public Mail changeMailStatus(Mail mail, Mail.STATUS status){
-        MailLog mailLog = MailLog.builder()
-                .mailStatus(status).build();
-        mailLogService.save(mailLog);
-        mail.getMailLog().add(mailLog);
+        MailLog mailLog = new MailLog();
+        mailLog.setMailStatus(status);
+        MailLog savedLog = mailLogService.save(mailLog);
+        mail.getMailLog().add(savedLog);
 
         mail.setStatus(status);
         return repository.save(mail);
@@ -52,10 +52,11 @@ public class MailService extends BaseRepository<MailRepository, Mail> {
 
     @Transactional
     public Mail changeMailStatus(Mail mail, Mail.STATUS status, String message){
-        MailLog mailLog = MailLog.builder()
-                .mailStatus(status).message(message.length() > 255 ? message.substring(0, 255) : message).build();
-        mailLogService.save(mailLog);
-        mail.getMailLog().add(mailLog);
+        MailLog mailLog = new MailLog();
+        mailLog.setMailStatus(status);
+        mailLog.setMessage(message.length() > 255 ? message.substring(0, 255) : message);
+        MailLog savedLog = mailLogService.save(mailLog);
+        mail.getMailLog().add(savedLog);
 
         mail.setStatus(status);
         return repository.save(mail);

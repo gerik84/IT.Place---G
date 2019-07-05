@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -45,22 +46,26 @@ public abstract class BaseRepository<R extends LongJpaRepository, T extends Base
     protected R repository;
 
     @Override
+    @Transactional
     public T save(T model) {
         return (T) repository.save(model);
     }
 
     @Override
+    @Transactional
     public <E extends BaseDto> T save(E model, Class<T> destinationType) {
         T entity = new ModelMapper().map(model, destinationType);
         return (T) repository.save(entity);
     }
 
     @Override
+    @Transactional
     public List<T> findAll() {
         return repository.findByWhenDeletedIsNull(null);
     }
 
     @Override
+    @Transactional
     public List<T> findAll(int page, int pageSize, String sort, String direction) {
 
         return repository.findByWhenDeletedIsNull(createPageable(page, pageSize, sort, direction));
@@ -91,18 +96,21 @@ public abstract class BaseRepository<R extends LongJpaRepository, T extends Base
     }
 
     @Override
+    @Transactional
     public T findById(Long id) {
         Optional byId = repository.findById(id);
         return byId.isPresent() ? (T) byId.get() : null;
     }
 
     @Override
+    @Transactional
     public void delete(T model) {
         model.setWhenDeleted(System.currentTimeMillis());
         save(model);
     }
 
     @Override
+    @Transactional
     public List<T> findByWhenCreatedDay(Long date) {
         long from = getBeginDay(date);
         long to = getEndDayWithBegin(from);
@@ -110,6 +118,7 @@ public abstract class BaseRepository<R extends LongJpaRepository, T extends Base
     }
 
     @Override
+    @Transactional
     public List<T> findByWhenUpdatedDay(Long date) {
         long from = getBeginDay(date);
         long to = getEndDayWithBegin(from);
@@ -117,6 +126,7 @@ public abstract class BaseRepository<R extends LongJpaRepository, T extends Base
     }
 
     @Override
+    @Transactional
     public List<T> findByWhenDeletedDay(Long date) {
         long from = getBeginDay(date);
         long to = getEndDayWithBegin(from);
