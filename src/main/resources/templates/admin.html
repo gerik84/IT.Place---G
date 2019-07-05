@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>G-Шоколад менеджер</title>
+
+    <link href="/images/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+    <link href="/images/favicon/favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
+    <link href="/images/favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link href="/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/small-business.css">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="fragments/modals :: modals"></div>
+
+<div class="container main-container">
+
+    <div class="card shadow w-100 h-100">
+        <div class="w-50 card m-3 p-3">
+            <h2>Создать пользователя</h2>
+            <form action="#" th:action="@{/sender}" th:object="${sender}" method="post">
+                <p>
+                <div>Почта отправителя</div>
+                <input class="form-control" type="email" required th:field="*{email}"/>
+                </p>
+                <p>
+                <div>Пароль для доступа к почте</div>
+                <input class="form-control" type="password" required th:field="*{emailPassword}"/>
+                </p>
+                <p>
+                <div>Пароль для доступа в ЛК</div>
+                <input class="form-control" type="password" required th:field="*{password}"/>
+                </p>
+                <p>
+                <div>Smtp</div>
+                <input class="form-control" type="text" required th:field="*{smtp}"/>
+                </p>
+                <p>
+                <div>Port</div>
+                <input class="form-control" type="number" th:field="*{port}"/>
+                </p>
+
+                <p>
+                    <select th:field="*{role}">
+                        <option  th:each="item : ${roles}" th:text="${item.name}" th:value="${item.name}"></option>
+                    </select>
+                </p>
+
+
+                <p><input type="submit" value="Создать"/></p>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
+<script src="/js/bootstrap-datepicker.min.js"></script>
+<script src="/js/bootstrap-datepicker.ru.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/entity.js"></script>
+</body>
+</html>
